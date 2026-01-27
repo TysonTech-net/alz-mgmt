@@ -52,7 +52,7 @@ custom_replacements = {
     dcr_vm_insights_name                    = "dcr-vm-insights"
 
     # Resource provisioning global connectivity
-    ddos_protection_plan_enabled = true
+    ddos_protection_plan_enabled = false
 
     # Resource provisioning primary connectivity
     primary_firewall_enabled                                             = true
@@ -391,6 +391,7 @@ hub_virtual_networks = {
             # name = "vnetGatewayConfigdefault"  # For backwards compatibility with previous naming, uncomment this line
             public_ip = {
               name = "$${primary_virtual_network_gateway_express_route_public_ip_name}"
+              ddos_protection_mode = "Enabled"
             }
           }
         }
@@ -402,12 +403,14 @@ hub_virtual_networks = {
             # name = "vnetGatewayConfigactive_active_1" # For backwards compatibility with previous naming, uncomment this line
             public_ip = {
               name = "$${primary_virtual_network_gateway_vpn_public_ip_name_1}"
+              ddos_protection_mode = "Enabled"
             }
           }
           active_active_2 = {
             # name = "vnetGatewayConfigactive_active_2"  # For backwards compatibility with previous naming, uncomment this line
             public_ip = {
               name = "$${primary_virtual_network_gateway_vpn_public_ip_name_2}"
+              ddos_protection_mode = "Enabled"
             }
           }
         }
@@ -430,6 +433,7 @@ hub_virtual_networks = {
       name                  = "$${primary_bastion_host_name}"
       bastion_public_ip = {
         name = "$${primary_bastion_host_public_ip_name}"
+        ddos_protection_mode = "Enabled"
       }
     }
   }
@@ -481,6 +485,7 @@ hub_virtual_networks = {
             # name = "vnetGatewayConfigdefault"  # For backwards compatibility with previous naming, uncomment this line
             public_ip = {
               name = "$${secondary_virtual_network_gateway_express_route_public_ip_name}"
+              ddos_protection_mode = "Enabled"
             }
           }
         }
@@ -492,12 +497,14 @@ hub_virtual_networks = {
             # name = "vnetGatewayConfigactive_active_1"  # For backwards compatibility with previous naming, uncomment this line
             public_ip = {
               name = "$${secondary_virtual_network_gateway_vpn_public_ip_name_1}"
+              ddos_protection_mode = "Enabled"
             }
           }
           active_active_2 = {
             # name = "vnetGatewayConfigactive_active_2"  # For backwards compatibility with previous naming, uncomment this line
             public_ip = {
               name = "$${secondary_virtual_network_gateway_vpn_public_ip_name_2}"
+              ddos_protection_mode = "Enabled"
             }
           }
         }
@@ -520,6 +527,7 @@ hub_virtual_networks = {
       name                  = "$${secondary_bastion_host_name}"
       bastion_public_ip = {
         name = "$${secondary_bastion_host_public_ip_name}"
+        ddos_protection_mode = "Enabled"
       }
     }
   }
