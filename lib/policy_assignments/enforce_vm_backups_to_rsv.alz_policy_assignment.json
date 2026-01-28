@@ -1,0 +1,34 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-09-01/policyAssignment.json#",
+  "name": "Enforce-VM-Backups-to-RSV",
+  "type": "Microsoft.Authorization/policyAssignments",
+  "apiVersion": "2021-06-01",
+  "properties": {
+    "displayName": "Enforce VM backups to Recovery Services Vault",
+    "description": "Deploys backup for VMs without the given tag, targeting an existing Recovery Services Vault in the same location.",
+    "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/09ce66bc-1220-4153-8104-e3f51c936913",
+    "parameters": {
+      "backupPolicyId": {
+        "value": "${backup_policy_id}"
+      },
+      "vaultId": {
+        "value": "${vault_id}"
+      },
+      "listOfVMExcludedTags": {
+        "value": [
+          {
+            "name": "backup",
+            "value": "excluded"
+          }
+        ]
+      }
+    },
+    "nonComplianceMessages": [
+      {
+        "message": "Virtual machines must be protected by the platform backup policy."
+      }
+    ],
+    "enforcementMode": "Default"
+  },
+  "location": "${policy_assignment_location}"
+}

@@ -7,6 +7,7 @@ policy_assignments_to_add:
     'UK-Official-and-UK-NHS',
     'CIS-Msft-Benchmark-v2',
     'Deploy-Diag-LogsCat',
+    'Enforce-VM-Backups-to-RSV',
   ]
 policy_assignments_to_remove: []
 policy_definitions_to_add:
