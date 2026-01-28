@@ -33,6 +33,12 @@ management_groups:
     exists: false
     parent_id: visplatform-platform
 
+  - id: visplatform-identity
+    display_name: VISPlatform-Identity
+    archetypes: [identity_custom]
+    exists: false
+    parent_id: visplatform-platform
+
   # Application landing zones parent
   - id: visplatform-application-landing-zones
     display_name: VISPlatform-Application-Landing-Zones

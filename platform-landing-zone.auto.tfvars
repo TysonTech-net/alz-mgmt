@@ -247,7 +247,7 @@ management_group_settings = {
   subscription_placement = {
     identity = {
       subscription_id       = "$${subscription_id_identity}"
-      management_group_name = "visplatform-security"
+      management_group_name = "visplatform-identity"
     }
     connectivity = {
       subscription_id       = "$${subscription_id_connectivity}"
