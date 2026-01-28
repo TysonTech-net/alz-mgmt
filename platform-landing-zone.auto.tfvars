@@ -20,6 +20,12 @@ The first location will be used as the primary location, the second as the secon
 */
 starter_locations = ["uksouth", "ukwest"]
 
+# CAF region short codes override
+starter_locations_short = {
+  starter_location_01_short = "uks"
+  starter_location_02_short = "ukw"
+}
+
 /*
 --- Custom Replacements ---
 You can define custom replacements to use throughout the configuration.
@@ -36,20 +42,20 @@ custom_replacements = {
     defender_email_security_contact = "liam.tyson@scc.com"
 
     # Resource group names
-    management_resource_group_name                 = "rg-management-$${starter_location_01}"
-    connectivity_hub_primary_resource_group_name   = "rg-hub-$${starter_location_01}"
-    connectivity_hub_secondary_resource_group_name = "rg-hub-$${starter_location_02}"
-    dns_resource_group_name                        = "rg-hub-dns-$${starter_location_01}"
-    ddos_resource_group_name                       = "rg-hub-ddos-$${starter_location_01}"
-    asc_export_resource_group_name                 = "rg-asc-export-$${starter_location_01}"
+    management_resource_group_name                 = "rg-mgmt-prod-$${starter_location_01_short}-001"
+    connectivity_hub_primary_resource_group_name   = "rg-hub-prod-$${starter_location_01_short}-001"
+    connectivity_hub_secondary_resource_group_name = "rg-hub-prod-$${starter_location_02_short}-001"
+    dns_resource_group_name                        = "rg-hub-dns-prod-$${starter_location_01_short}-001"
+    ddos_resource_group_name                       = "rg-hub-ddos-prod-$${starter_location_01_short}-001"
+    asc_export_resource_group_name                 = "rg-sec-asc-prod-$${starter_location_01_short}-001"
 
     # Resource names management
-    log_analytics_workspace_name            = "law-management-$${starter_location_01}"
-    ddos_protection_plan_name               = "ddos-$${starter_location_01}"
-    ama_user_assigned_managed_identity_name = "uami-management-ama-$${starter_location_01}"
-    dcr_change_tracking_name                = "dcr-change-tracking"
-    dcr_defender_sql_name                   = "dcr-defender-sql"
-    dcr_vm_insights_name                    = "dcr-vm-insights"
+    log_analytics_workspace_name            = "law-mgmt-prod-$${starter_location_01_short}-001"
+    ddos_protection_plan_name               = "ddos-prod-$${starter_location_01_short}-001"
+    ama_user_assigned_managed_identity_name = "mi-mgmt-ama-prod-$${starter_location_01_short}-001"
+    dcr_change_tracking_name                = "dcr-ct-prod-$${starter_location_01_short}-001"
+    dcr_defender_sql_name                   = "dcr-sql-prod-$${starter_location_01_short}-001"
+    dcr_vm_insights_name                    = "dcr-vmi-prod-$${starter_location_01_short}-001"
 
     # Resource provisioning global connectivity
     ddos_protection_plan_enabled = false
@@ -77,38 +83,38 @@ custom_replacements = {
     secondary_bastion_enabled                                              = true
 
     # Resource names primary connectivity
-    primary_virtual_network_name                                 = "vnet-hub-$${starter_location_01}"
-    primary_firewall_name                                        = "fw-hub-$${starter_location_01}"
-    primary_firewall_policy_name                                 = "fwp-hub-$${starter_location_01}"
-    primary_firewall_public_ip_name                              = "pip-fw-hub-$${starter_location_01}"
-    primary_firewall_management_public_ip_name                   = "pip-fw-hub-mgmt-$${starter_location_01}"
-    primary_route_table_firewall_name                            = "rt-hub-fw-$${starter_location_01}"
-    primary_route_table_user_subnets_name                        = "rt-hub-std-$${starter_location_01}"
-    primary_virtual_network_gateway_express_route_name           = "vgw-hub-er-$${starter_location_01}"
-    primary_virtual_network_gateway_express_route_public_ip_name = "pip-vgw-hub-er-$${starter_location_01}"
-    primary_virtual_network_gateway_vpn_name                     = "vgw-hub-vpn-$${starter_location_01}"
-    primary_virtual_network_gateway_vpn_public_ip_name_1         = "pip-vgw-hub-vpn-$${starter_location_01}-001"
-    primary_virtual_network_gateway_vpn_public_ip_name_2         = "pip-vgw-hub-vpn-$${starter_location_01}-002"
-    primary_private_dns_resolver_name                            = "pdr-hub-dns-$${starter_location_01}"
-    primary_bastion_host_name                                    = "bas-hub-$${starter_location_01}"
-    primary_bastion_host_public_ip_name                          = "pip-bastion-hub-$${starter_location_01}"
+    primary_virtual_network_name                                 = "vnet-hub-prod-$${starter_location_01_short}-001"
+    primary_firewall_name                                        = "afw-hub-prod-$${starter_location_01_short}-001"
+    primary_firewall_policy_name                                 = "afwp-hub-prod-$${starter_location_01_short}-001"
+    primary_firewall_public_ip_name                              = "pip-afw-prod-$${starter_location_01_short}-001"
+    primary_firewall_management_public_ip_name                   = "pip-afw-mgmt-prod-$${starter_location_01_short}-001"
+    primary_route_table_firewall_name                            = "rt-fw-prod-$${starter_location_01_short}-001"
+    primary_route_table_user_subnets_name                        = "rt-udr-prod-$${starter_location_01_short}-001"
+    primary_virtual_network_gateway_express_route_name           = "ergw-hub-prod-$${starter_location_01_short}-001"
+    primary_virtual_network_gateway_express_route_public_ip_name = "pip-ergw-prod-$${starter_location_01_short}-001"
+    primary_virtual_network_gateway_vpn_name                     = "vng-hub-prod-$${starter_location_01_short}-001"
+    primary_virtual_network_gateway_vpn_public_ip_name_1         = "pip-vng-prod-$${starter_location_01_short}-001"
+    primary_virtual_network_gateway_vpn_public_ip_name_2         = "pip-vng-prod-$${starter_location_01_short}-002"
+    primary_private_dns_resolver_name                            = "pdr-hub-prod-$${starter_location_01_short}-001"
+    primary_bastion_host_name                                    = "bas-hub-prod-$${starter_location_01_short}-001"
+    primary_bastion_host_public_ip_name                          = "pip-bas-prod-$${starter_location_01_short}-001"
 
     # Resource names secondary connectivity
-    secondary_virtual_network_name                                 = "vnet-hub-$${starter_location_02}"
-    secondary_firewall_name                                        = "fw-hub-$${starter_location_02}"
-    secondary_firewall_policy_name                                 = "fwp-hub-$${starter_location_02}"
-    secondary_firewall_public_ip_name                              = "pip-fw-hub-$${starter_location_02}"
-    secondary_firewall_management_public_ip_name                   = "pip-fw-hub-mgmt-$${starter_location_02}"
-    secondary_route_table_firewall_name                            = "rt-hub-fw-$${starter_location_02}"
-    secondary_route_table_user_subnets_name                        = "rt-hub-std-$${starter_location_02}"
-    secondary_virtual_network_gateway_express_route_name           = "vgw-hub-er-$${starter_location_02}"
-    secondary_virtual_network_gateway_express_route_public_ip_name = "pip-vgw-hub-er-$${starter_location_02}"
-    secondary_virtual_network_gateway_vpn_name                     = "vgw-hub-vpn-$${starter_location_02}"
-    secondary_virtual_network_gateway_vpn_public_ip_name_1         = "pip-vgw-hub-vpn-$${starter_location_02}-001"
-    secondary_virtual_network_gateway_vpn_public_ip_name_2         = "pip-vgw-hub-vpn-$${starter_location_02}-002"
-    secondary_private_dns_resolver_name                            = "pdr-hub-dns-$${starter_location_02}"
-    secondary_bastion_host_name                                    = "bas-hub-$${starter_location_02}"
-    secondary_bastion_host_public_ip_name                          = "pip-bastion-hub-$${starter_location_02}"
+    secondary_virtual_network_name                                 = "vnet-hub-prod-$${starter_location_02_short}-001"
+    secondary_firewall_name                                        = "afw-hub-prod-$${starter_location_02_short}-001"
+    secondary_firewall_policy_name                                 = "afwp-hub-prod-$${starter_location_02_short}-001"
+    secondary_firewall_public_ip_name                              = "pip-afw-prod-$${starter_location_02_short}-001"
+    secondary_firewall_management_public_ip_name                   = "pip-afw-mgmt-prod-$${starter_location_02_short}-001"
+    secondary_route_table_firewall_name                            = "rt-fw-prod-$${starter_location_02_short}-001"
+    secondary_route_table_user_subnets_name                        = "rt-udr-prod-$${starter_location_02_short}-001"
+    secondary_virtual_network_gateway_express_route_name           = "ergw-hub-prod-$${starter_location_02_short}-001"
+    secondary_virtual_network_gateway_express_route_public_ip_name = "pip-ergw-prod-$${starter_location_02_short}-001"
+    secondary_virtual_network_gateway_vpn_name                     = "vng-hub-prod-$${starter_location_02_short}-001"
+    secondary_virtual_network_gateway_vpn_public_ip_name_1         = "pip-vng-prod-$${starter_location_02_short}-001"
+    secondary_virtual_network_gateway_vpn_public_ip_name_2         = "pip-vng-prod-$${starter_location_02_short}-002"
+    secondary_private_dns_resolver_name                            = "pdr-hub-prod-$${starter_location_02_short}-001"
+    secondary_bastion_host_name                                    = "bas-hub-prod-$${starter_location_02_short}-001"
+    secondary_bastion_host_public_ip_name                          = "pip-bas-prod-$${starter_location_02_short}-001"
 
     # Private DNS Zones primary
     primary_auto_registration_zone_name = "$${starter_location_01}.azure.local"
