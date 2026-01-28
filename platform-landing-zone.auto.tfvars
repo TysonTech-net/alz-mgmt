@@ -261,6 +261,14 @@ management_group_settings = {
       subscription_id       = "$${subscription_id_security}"
       management_group_name = "visplatform-security"
     }
+    audiocodes_production = {
+      subscription_id       = "93d30b67-fbad-4471-9d91-e1af387be775"
+      management_group_name = "audiocodes"
+    }
+    audiocodes_nle = {
+      subscription_id       = "ce5ab416-78df-4cbd-9dd6-f54136cf5297"
+      management_group_name = "audiocodes"
+    }
   }
   policy_assignments_to_modify = {
     alz = {
