@@ -82,6 +82,12 @@ variable "enable_telemetry" {
   description = "Flag to enable/disable telemetry"
 }
 
+variable "security_resources_enabled" {
+  type        = bool
+  default     = false
+  description = "When true, deploy security subscription resources such as the security Log Analytics workspace and Sentinel onboarding."
+}
+
 variable "custom_replacements" {
   type = object({
     names                      = optional(map(string), {})

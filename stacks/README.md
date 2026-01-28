@@ -6,7 +6,7 @@ Structure:
 - `connectivity/` – hub/spoke networking only.
 - `management/` – management groups and management resources.
 - `identity/` – placeholder for future identity resources.
-- `security/` – placeholder for future security resources.
+- `security/` – security Log Analytics workspace + Sentinel onboarding.
 
 Each stack contains:
 - `backend.tfvars` – backend settings (fill in storage account/container/key).

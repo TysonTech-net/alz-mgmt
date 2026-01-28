@@ -1,17 +1,22 @@
 # Security stack
 
-Purpose: placeholder for security subscription–specific deployments. Uses isolated state so future security resources (e.g., Sentinel, Defender settings) can be added cleanly.
+Purpose: deploy the security subscription resources (security Log Analytics workspace + Microsoft Sentinel onboarding) with isolated state.
 
-## How to run (no-op today)
+## How to run
 ```bash
-terraform -chdir=../.. init  \\
+terraform -chdir=../.. init  \
   -backend-config=stacks/security/backend.tfvars
 
-terraform -chdir=../.. plan \\
-  -var-file=platform-landing-zone.auto.tfvars \\
+terraform -chdir=../.. plan \
+  -var-file=platform-landing-zone.auto.tfvars \
   -var-file=stacks/security/override.tfvars
 ```
 
+## What it deploys
+- Security resource group (name from `security_log_analytics_resource_group_name`)
+- Log Analytics workspace (name from `security_log_analytics_workspace_name`, retention 90d)
+- Sentinel onboarding of that workspace
+
 ## Notes
-- Disables connectivity and management resources; currently results in no changes.
+- Disables connectivity and management resources for this stack.
 - Backend config placeholders—set RG/account/container/key before init.

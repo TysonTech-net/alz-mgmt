@@ -40,6 +40,8 @@ custom_replacements = {
     connectivity_hub_primary_resource_group_name   = "rg-hub-$${starter_location_01}"
     connectivity_hub_secondary_resource_group_name = "rg-hub-$${starter_location_02}"
     dns_resource_group_name                        = "rg-hub-dns-$${starter_location_01}"
+    security_log_analytics_resource_group_name     = "rg-sec-logs-$${starter_location_01}"
+    security_log_analytics_workspace_name          = "law-sec-$${starter_location_01}"
     ddos_resource_group_name                       = "rg-hub-ddos-$${starter_location_01}"
     asc_export_resource_group_name                 = "rg-asc-export-$${starter_location_01}"
 
@@ -149,6 +151,7 @@ custom_replacements = {
     primary_connectivity_resource_group_id   = "/subscriptions/$${subscription_id_connectivity}/resourceGroups/$${connectivity_hub_primary_resource_group_name}"
     secondary_connectivity_resource_group_id = "/subscriptions/$${subscription_id_connectivity}/resourceGroups/$${connectivity_hub_secondary_resource_group_name}"
     dns_resource_group_id                    = "/subscriptions/$${subscription_id_connectivity}/resourceGroups/$${dns_resource_group_name}"
+    security_log_analytics_resource_group_id = "/subscriptions/$${subscription_id_security}/resourceGroups/$${security_log_analytics_resource_group_name}"
   }
 
   /*
@@ -164,6 +167,7 @@ custom_replacements = {
     ama_user_assigned_managed_identity_id       = "$${management_resource_group_id}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/$${ama_user_assigned_managed_identity_name}"
     log_analytics_workspace_id                  = "$${management_resource_group_id}/providers/Microsoft.OperationalInsights/workspaces/$${log_analytics_workspace_name}"
     ddos_protection_plan_id                     = "$${ddos_protection_plan_resource_group_id}/providers/Microsoft.Network/ddosProtectionPlans/$${ddos_protection_plan_name}"
+    security_log_analytics_workspace_id         = "$${security_log_analytics_resource_group_id}/providers/Microsoft.OperationalInsights/workspaces/$${security_log_analytics_workspace_name}"
   }
 }
 
