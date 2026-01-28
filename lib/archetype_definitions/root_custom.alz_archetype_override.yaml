@@ -8,6 +8,7 @@ policy_assignments_to_add:
     'CIS-Msft-Benchmark-v2',
     'Deploy-Diag-LogsCat',
     'Enforce-VM-Backups-to-RSV',
+    'Enable-Azure-Monitor-VM',
   ]
 policy_assignments_to_remove: []
 policy_definitions_to_add:

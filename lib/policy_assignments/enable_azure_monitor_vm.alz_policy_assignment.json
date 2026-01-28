@@ -1,0 +1,18 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-09-01/policyAssignment.json#",
+  "name": "Enable-Azure-Monitor-VM",
+  "type": "Microsoft.Authorization/policyAssignments",
+  "apiVersion": "2021-06-01",
+  "properties": {
+    "displayName": "Enable Azure Monitor for Virtual Machines",
+    "description": "Deploys Azure Monitor VM extension/agents to virtual machines and reports to the specified Log Analytics workspace.",
+    "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/924bfe3a-762f-40e7-86dd-5c8b95eb09e6",
+    "parameters": {
+      "logAnalytics": {
+        "value": "${log_analytics_workspace_id}"
+      }
+    },
+    "enforcementMode": "Default"
+  },
+  "location": "${policy_assignment_location}"
+}
