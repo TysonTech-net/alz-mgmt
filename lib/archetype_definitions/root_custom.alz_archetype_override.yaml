@@ -2,36 +2,17 @@ base_archetype: root
 name: root_custom
 policy_assignments_to_add:
   [
-    'PA-Evri-Tagging-Baseline',
-    'PA-Evri-Compute-Baseline',
-    'PA-Evri-General-Baseline',
-    'PA-Evri-Sec-Baseline',
-    'PA-Evri-Storage-Baseline',
-    'PA-Evri-Cost-Baseline',
     'Win-VM-Eventlogs-DCR',
     'Audit-VM-Backups',
-    'Deny-MgmtPorts-Internet',
-    'Deny-Subnet-Without-Nsg',
     'UK-Official-and-UK-NHS',
     'CIS-Msft-Benchmark-v2',
-    'Audit-Logs-To-Rapid7-EH',
-    'AllLogs-To-Rapid7-EH',
-    'ActivityLog-To-Rapid7-EH',
+    'Deploy-Diag-LogsCat',
   ]
 policy_assignments_to_remove: []
 policy_definitions_to_add:
   ['Enforce-Resource-Tag', 'Enforce-VM-Tag-and-Values', 'ActivityLog-To-EH']
 policy_definitions_to_remove: []
-policy_set_definitions_to_add:
-  [
-    'PI-Evri-Tagging-Baseline',
-    'PI-Evri-Compute-Baseline',
-    'PI-Evri-General-Baseline',
-    'PI-Evri-Sec-Baseline',
-    'PI-Evri-Storage-Baseline',
-    'PI-Evri-Net-Sec-Baseline',
-    'PI-Evri-Cost-Baseline',
-  ]
+policy_set_definitions_to_add: []
 policy_set_definitions_to_remove: []
 role_definitions_to_add: []
 role_definitions_to_remove: []
