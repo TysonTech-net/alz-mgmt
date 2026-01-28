@@ -4,12 +4,12 @@ Purpose: deploy only the connectivity landing‑zone resources (hub/spoke VNets,
 
 ## How to run
 ```bash
-terraform -chdir=../.. init  \\
-  -backend-config=stacks/connectivity/backend.tfvars
+terraform -chdir=stacks/connectivity init \\
+  -backend-config=backend.tfvars
 
-terraform -chdir=../.. plan \\
-  -var-file=platform-landing-zone.auto.tfvars \\
-  -var-file=stacks/connectivity/override.tfvars
+terraform -chdir=stacks/connectivity plan \\
+  -var-file=../platform-landing-zone.auto.tfvars \\
+  -var-file=override.tfvars
 ```
 
 ## Notes

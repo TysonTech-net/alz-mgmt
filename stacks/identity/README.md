@@ -4,12 +4,12 @@ Purpose: placeholder for identity subscription–specific deployments (none in c
 
 ## How to run (no-op today)
 ```bash
-terraform -chdir=../.. init  \\
-  -backend-config=stacks/identity/backend.tfvars
+terraform -chdir=stacks/identity init \\
+  -backend-config=backend.tfvars
 
-terraform -chdir=../.. plan \\
-  -var-file=platform-landing-zone.auto.tfvars \\
-  -var-file=stacks/identity/override.tfvars
+terraform -chdir=stacks/identity plan \\
+  -var-file=../platform-landing-zone.auto.tfvars \\
+  -var-file=override.tfvars
 ```
 
 ## Notes

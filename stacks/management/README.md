@@ -4,12 +4,12 @@ Purpose: deploy management groups and management resources (Log Analytics, DCRs,
 
 ## How to run
 ```bash
-terraform -chdir=../.. init  \\
-  -backend-config=stacks/management/backend.tfvars
+terraform -chdir=stacks/management init \\
+  -backend-config=backend.tfvars
 
-terraform -chdir=../.. plan \\
-  -var-file=platform-landing-zone.auto.tfvars \\
-  -var-file=stacks/management/override.tfvars
+terraform -chdir=stacks/management plan \\
+  -var-file=../platform-landing-zone.auto.tfvars \\
+  -var-file=override.tfvars
 ```
 
 ## Notes

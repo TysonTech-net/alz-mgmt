@@ -4,12 +4,12 @@ Purpose: deploy the security subscription resources (security Log Analytics work
 
 ## How to run
 ```bash
-terraform -chdir=../.. init  \
-  -backend-config=stacks/security/backend.tfvars
+terraform -chdir=stacks/security init \
+  -backend-config=backend.tfvars
 
-terraform -chdir=../.. plan \
-  -var-file=platform-landing-zone.auto.tfvars \
-  -var-file=stacks/security/override.tfvars
+terraform -chdir=stacks/security plan \
+  -var-file=../platform-landing-zone.auto.tfvars \
+  -var-file=override.tfvars
 ```
 
 ## What it deploys
