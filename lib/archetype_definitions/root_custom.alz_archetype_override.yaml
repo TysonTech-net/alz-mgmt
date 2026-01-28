@@ -10,6 +10,7 @@ policy_assignments_to_add:
     'Enforce-VM-Backups-to-RSV',
     'Enable-Azure-Monitor-VM',
     'Append-Tag-From-RG',
+    # 'Deploy-Lock-Resource-Groups',
   ]
 policy_assignments_to_remove: []
 policy_definitions_to_add:
