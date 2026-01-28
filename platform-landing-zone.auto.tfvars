@@ -42,20 +42,20 @@ custom_replacements = {
     defender_email_security_contact = "liam.tyson@scc.com"
 
     # Resource group names
-    management_resource_group_name                 = "rg-mgmt-prod-$${starter_location_01_short}-001"
-    connectivity_hub_primary_resource_group_name   = "rg-hub-prod-$${starter_location_01_short}-001"
-    connectivity_hub_secondary_resource_group_name = "rg-hub-prod-$${starter_location_02_short}-001"
-    dns_resource_group_name                        = "rg-hub-dns-prod-$${starter_location_01_short}-001"
-    ddos_resource_group_name                       = "rg-hub-ddos-prod-$${starter_location_01_short}-001"
-    asc_export_resource_group_name                 = "rg-sec-asc-prod-$${starter_location_01_short}-001"
+    management_resource_group_name                 = "rg-mgmt-prod-mgmt-$${starter_location_01_short}-001"
+    connectivity_hub_primary_resource_group_name   = "rg-hub-prod-network-$${starter_location_01_short}-001"
+    connectivity_hub_secondary_resource_group_name = "rg-hub-prod-network-$${starter_location_02_short}-001"
+    dns_resource_group_name                        = "rg-hub-prod-dns-$${starter_location_01_short}-001"
+    ddos_resource_group_name                       = "rg-hub-prod-ddos-$${starter_location_01_short}-001"
+    asc_export_resource_group_name                 = "rg-sec-prod-asc-$${starter_location_01_short}-001"
 
     # Resource names management
     log_analytics_workspace_name            = "law-mgmt-prod-$${starter_location_01_short}-001"
-    ddos_protection_plan_name               = "ddos-prod-$${starter_location_01_short}-001"
-    ama_user_assigned_managed_identity_name = "mi-mgmt-ama-prod-$${starter_location_01_short}-001"
-    dcr_change_tracking_name                = "dcr-ct-prod-$${starter_location_01_short}-001"
-    dcr_defender_sql_name                   = "dcr-sql-prod-$${starter_location_01_short}-001"
-    dcr_vm_insights_name                    = "dcr-vmi-prod-$${starter_location_01_short}-001"
+    ddos_protection_plan_name               = "ddos-hub-prod-$${starter_location_01_short}-001"
+    ama_user_assigned_managed_identity_name = "mi-mgmt-prod-ama-$${starter_location_01_short}-001"
+    dcr_change_tracking_name                = "dcr-hub-prod-ct-$${starter_location_01_short}-001"
+    dcr_defender_sql_name                   = "dcr-hub-prod-sql-$${starter_location_01_short}-001"
+    dcr_vm_insights_name                    = "dcr-hub-prod-vmi-$${starter_location_01_short}-001"
 
     # Resource provisioning global connectivity
     ddos_protection_plan_enabled = false
@@ -86,35 +86,35 @@ custom_replacements = {
     primary_virtual_network_name                                 = "vnet-hub-prod-$${starter_location_01_short}-001"
     primary_firewall_name                                        = "afw-hub-prod-$${starter_location_01_short}-001"
     primary_firewall_policy_name                                 = "afwp-hub-prod-$${starter_location_01_short}-001"
-    primary_firewall_public_ip_name                              = "pip-afw-prod-$${starter_location_01_short}-001"
-    primary_firewall_management_public_ip_name                   = "pip-afw-mgmt-prod-$${starter_location_01_short}-001"
-    primary_route_table_firewall_name                            = "rt-fw-prod-$${starter_location_01_short}-001"
-    primary_route_table_user_subnets_name                        = "rt-udr-prod-$${starter_location_01_short}-001"
+    primary_firewall_public_ip_name                              = "pip-hub-prod-afw-$${starter_location_01_short}-001"
+    primary_firewall_management_public_ip_name                   = "pip-hub-prod-afw-mgmt-$${starter_location_01_short}-001"
+    primary_route_table_firewall_name                            = "rt-hub-prod-fw-$${starter_location_01_short}-001"
+    primary_route_table_user_subnets_name                        = "rt-hub-prod-udr-$${starter_location_01_short}-001"
     primary_virtual_network_gateway_express_route_name           = "ergw-hub-prod-$${starter_location_01_short}-001"
-    primary_virtual_network_gateway_express_route_public_ip_name = "pip-ergw-prod-$${starter_location_01_short}-001"
+    primary_virtual_network_gateway_express_route_public_ip_name = "pip-hub-prod-ergw-$${starter_location_01_short}-001"
     primary_virtual_network_gateway_vpn_name                     = "vng-hub-prod-$${starter_location_01_short}-001"
-    primary_virtual_network_gateway_vpn_public_ip_name_1         = "pip-vng-prod-$${starter_location_01_short}-001"
-    primary_virtual_network_gateway_vpn_public_ip_name_2         = "pip-vng-prod-$${starter_location_01_short}-002"
+    primary_virtual_network_gateway_vpn_public_ip_name_1         = "pip-hub-prod-vng-$${starter_location_01_short}-001"
+    primary_virtual_network_gateway_vpn_public_ip_name_2         = "pip-hub-prod-vng-$${starter_location_01_short}-002"
     primary_private_dns_resolver_name                            = "pdr-hub-prod-$${starter_location_01_short}-001"
     primary_bastion_host_name                                    = "bas-hub-prod-$${starter_location_01_short}-001"
-    primary_bastion_host_public_ip_name                          = "pip-bas-prod-$${starter_location_01_short}-001"
+    primary_bastion_host_public_ip_name                          = "pip-hub-prod-bas-$${starter_location_01_short}-001"
 
     # Resource names secondary connectivity
     secondary_virtual_network_name                                 = "vnet-hub-prod-$${starter_location_02_short}-001"
     secondary_firewall_name                                        = "afw-hub-prod-$${starter_location_02_short}-001"
     secondary_firewall_policy_name                                 = "afwp-hub-prod-$${starter_location_02_short}-001"
-    secondary_firewall_public_ip_name                              = "pip-afw-prod-$${starter_location_02_short}-001"
-    secondary_firewall_management_public_ip_name                   = "pip-afw-mgmt-prod-$${starter_location_02_short}-001"
-    secondary_route_table_firewall_name                            = "rt-fw-prod-$${starter_location_02_short}-001"
-    secondary_route_table_user_subnets_name                        = "rt-udr-prod-$${starter_location_02_short}-001"
+    secondary_firewall_public_ip_name                              = "pip-hub-prod-afw-$${starter_location_02_short}-001"
+    secondary_firewall_management_public_ip_name                   = "pip-hub-prod-afw-mgmt-$${starter_location_02_short}-001"
+    secondary_route_table_firewall_name                            = "rt-hub-prod-fw-$${starter_location_02_short}-001"
+    secondary_route_table_user_subnets_name                        = "rt-hub-prod-udr-$${starter_location_02_short}-001"
     secondary_virtual_network_gateway_express_route_name           = "ergw-hub-prod-$${starter_location_02_short}-001"
-    secondary_virtual_network_gateway_express_route_public_ip_name = "pip-ergw-prod-$${starter_location_02_short}-001"
+    secondary_virtual_network_gateway_express_route_public_ip_name = "pip-hub-prod-ergw-$${starter_location_02_short}-001"
     secondary_virtual_network_gateway_vpn_name                     = "vng-hub-prod-$${starter_location_02_short}-001"
-    secondary_virtual_network_gateway_vpn_public_ip_name_1         = "pip-vng-prod-$${starter_location_02_short}-001"
-    secondary_virtual_network_gateway_vpn_public_ip_name_2         = "pip-vng-prod-$${starter_location_02_short}-002"
+    secondary_virtual_network_gateway_vpn_public_ip_name_1         = "pip-hub-prod-vng-$${starter_location_02_short}-001"
+    secondary_virtual_network_gateway_vpn_public_ip_name_2         = "pip-hub-prod-vng-$${starter_location_02_short}-002"
     secondary_private_dns_resolver_name                            = "pdr-hub-prod-$${starter_location_02_short}-001"
     secondary_bastion_host_name                                    = "bas-hub-prod-$${starter_location_02_short}-001"
-    secondary_bastion_host_public_ip_name                          = "pip-bas-prod-$${starter_location_02_short}-001"
+    secondary_bastion_host_public_ip_name                          = "pip-hub-prod-bas-$${starter_location_02_short}-001"
 
     # Private DNS Zones primary
     primary_auto_registration_zone_name = "$${starter_location_01}.azure.local"
@@ -247,19 +247,27 @@ management_group_settings = {
   subscription_placement = {
     identity = {
       subscription_id       = "$${subscription_id_identity}"
-      management_group_name = "identity"
+      management_group_name = "visplatform-identity"
     }
     connectivity = {
       subscription_id       = "$${subscription_id_connectivity}"
-      management_group_name = "connectivity"
+      management_group_name = "visplatform-connectivity"
     }
     management = {
       subscription_id       = "$${subscription_id_management}"
-      management_group_name = "management"
+      management_group_name = "visplatform-management"
     }
     security = {
       subscription_id       = "$${subscription_id_security}"
-      management_group_name = "security"
+      management_group_name = "visplatform-security"
+    }
+    audiocodes_production = {
+      subscription_id       = "93d30b67-fbad-4471-9d91-e1af387be775"
+      management_group_name = "audiocodes"
+    }
+    audiocodes_nle = {
+      subscription_id       = "ce5ab416-78df-4cbd-9dd6-f54136cf5297"
+      management_group_name = "audiocodes"
     }
   }
   policy_assignments_to_modify = {
@@ -396,7 +404,7 @@ hub_virtual_networks = {
           default = {
             # name = "vnetGatewayConfigdefault"  # For backwards compatibility with previous naming, uncomment this line
             public_ip = {
-              name = "$${primary_virtual_network_gateway_express_route_public_ip_name}"
+              name                 = "$${primary_virtual_network_gateway_express_route_public_ip_name}"
               ddos_protection_mode = "Enabled"
             }
           }
@@ -408,14 +416,14 @@ hub_virtual_networks = {
           active_active_1 = {
             # name = "vnetGatewayConfigactive_active_1" # For backwards compatibility with previous naming, uncomment this line
             public_ip = {
-              name = "$${primary_virtual_network_gateway_vpn_public_ip_name_1}"
+              name                 = "$${primary_virtual_network_gateway_vpn_public_ip_name_1}"
               ddos_protection_mode = "Enabled"
             }
           }
           active_active_2 = {
             # name = "vnetGatewayConfigactive_active_2"  # For backwards compatibility with previous naming, uncomment this line
             public_ip = {
-              name = "$${primary_virtual_network_gateway_vpn_public_ip_name_2}"
+              name                 = "$${primary_virtual_network_gateway_vpn_public_ip_name_2}"
               ddos_protection_mode = "Enabled"
             }
           }
@@ -438,7 +446,7 @@ hub_virtual_networks = {
       subnet_address_prefix = "$${primary_bastion_subnet_address_prefix}"
       name                  = "$${primary_bastion_host_name}"
       bastion_public_ip = {
-        name = "$${primary_bastion_host_public_ip_name}"
+        name                 = "$${primary_bastion_host_public_ip_name}"
         ddos_protection_mode = "Enabled"
       }
     }
@@ -490,7 +498,7 @@ hub_virtual_networks = {
           default = {
             # name = "vnetGatewayConfigdefault"  # For backwards compatibility with previous naming, uncomment this line
             public_ip = {
-              name = "$${secondary_virtual_network_gateway_express_route_public_ip_name}"
+              name                 = "$${secondary_virtual_network_gateway_express_route_public_ip_name}"
               ddos_protection_mode = "Enabled"
             }
           }
@@ -502,14 +510,14 @@ hub_virtual_networks = {
           active_active_1 = {
             # name = "vnetGatewayConfigactive_active_1"  # For backwards compatibility with previous naming, uncomment this line
             public_ip = {
-              name = "$${secondary_virtual_network_gateway_vpn_public_ip_name_1}"
+              name                 = "$${secondary_virtual_network_gateway_vpn_public_ip_name_1}"
               ddos_protection_mode = "Enabled"
             }
           }
           active_active_2 = {
             # name = "vnetGatewayConfigactive_active_2"  # For backwards compatibility with previous naming, uncomment this line
             public_ip = {
-              name = "$${secondary_virtual_network_gateway_vpn_public_ip_name_2}"
+              name                 = "$${secondary_virtual_network_gateway_vpn_public_ip_name_2}"
               ddos_protection_mode = "Enabled"
             }
           }
@@ -532,7 +540,7 @@ hub_virtual_networks = {
       subnet_address_prefix = "$${secondary_bastion_subnet_address_prefix}"
       name                  = "$${secondary_bastion_host_name}"
       bastion_public_ip = {
-        name = "$${secondary_bastion_host_public_ip_name}"
+        name                 = "$${secondary_bastion_host_public_ip_name}"
         ddos_protection_mode = "Enabled"
       }
     }
