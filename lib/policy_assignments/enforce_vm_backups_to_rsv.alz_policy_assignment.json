@@ -7,6 +7,7 @@
     "displayName": "Enforce VM backups to Recovery Services Vault",
     "description": "Deploys backup for VMs without the given tag, targeting an existing Recovery Services Vault in the same location.",
     "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/09ce66bc-1220-4153-8104-e3f51c936913",
+    "definitionVersion": "9.*.*",
     "parameters": {
       "backupPolicyId": {
         "value": "${backup_policy_id}"
@@ -30,5 +31,8 @@
     ],
     "enforcementMode": "Default"
   },
-  "location": "${policy_assignment_location}"
+  "location": "${policy_assignment_location}",
+  "identity": {
+    "type": "SystemAssigned"
+  }
 }

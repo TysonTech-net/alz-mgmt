@@ -10,9 +10,18 @@
     "parameters": {
       "logAnalytics": {
         "value": "${log_analytics_workspace_id}"
+      },
+      "dcrResourceId": {
+        "value": "${ama_vm_insights_data_collection_rule_id}"
+      },
+      "bringYourOwnUserAssignedManagedIdentity": {
+        "value": false
       }
     },
     "enforcementMode": "Default"
   },
-  "location": "${policy_assignment_location}"
+  "location": "${policy_assignment_location}",
+  "identity": {
+    "type": "SystemAssigned"
+  }
 }

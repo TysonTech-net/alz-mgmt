@@ -15,5 +15,8 @@
     "scope": "${current_scope_resource_id}",
     "enforcementMode": null
   },
-  "location": "${default_location}"
+  "location": "${default_location}",
+  "identity": {
+    "type": "SystemAssigned"
+  }
 }
