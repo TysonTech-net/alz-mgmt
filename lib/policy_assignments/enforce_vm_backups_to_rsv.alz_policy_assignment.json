@@ -9,20 +9,10 @@
     "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/09ce66bc-1220-4153-8104-e3f51c936913",
     "definitionVersion": "9.*.*",
     "parameters": {
-      "backupPolicyId": {
-        "value": "${backup_policy_id}"
-      },
-      "vaultId": {
-        "value": "${vault_id}"
-      },
-      "listOfVMExcludedTags": {
-        "value": [
-          {
-            "name": "backup",
-            "value": "excluded"
-          }
-        ]
-      }
+      "backupPolicyId": { "value": "${backup_policy_id}" },
+      "vaultLocation": { "value": "${default_location}" },
+      "exclusionTagName": { "value": "backup" },
+      "exclusionTagValue": { "value": ["excluded"] }
     },
     "nonComplianceMessages": [
       {

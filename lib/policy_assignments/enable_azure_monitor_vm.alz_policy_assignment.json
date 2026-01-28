@@ -8,14 +8,14 @@
     "description": "Deploys the Azure Monitor for VMs initiative to configure AMA/Insights and route data to the specified Log Analytics workspace.",
     "policyDefinitionId": "/providers/Microsoft.Authorization/policySetDefinitions/924bfe3a-762f-40e7-86dd-5c8b95eb09e6",
     "parameters": {
-      "logAnalytics": {
-        "value": "${log_analytics_workspace_id}"
-      },
       "dcrResourceId": {
         "value": "${ama_vm_insights_data_collection_rule_id}"
       },
       "bringYourOwnUserAssignedManagedIdentity": {
         "value": false
+      },
+      "scopeToSupportedImages": {
+        "value": true
       }
     },
     "enforcementMode": "Default"
