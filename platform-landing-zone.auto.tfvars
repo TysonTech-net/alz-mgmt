@@ -441,6 +441,9 @@ hub_virtual_networks = {
     private_dns_resolver = {
       subnet_address_prefix = "$${primary_private_dns_resolver_subnet_address_prefix}"
       name                  = "$${primary_private_dns_resolver_name}"
+      lock = {
+        kind = "CanNotDelete"
+      }
     }
     bastion = {
       subnet_address_prefix = "$${primary_bastion_subnet_address_prefix}"
@@ -535,6 +538,9 @@ hub_virtual_networks = {
     private_dns_resolver = {
       subnet_address_prefix = "$${secondary_private_dns_resolver_subnet_address_prefix}"
       name                  = "$${secondary_private_dns_resolver_name}"
+      lock = {
+        kind = "CanNotDelete"
+      }
     }
     bastion = {
       subnet_address_prefix = "$${secondary_bastion_subnet_address_prefix}"
