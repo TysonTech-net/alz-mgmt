@@ -1,0 +1,19 @@
+{
+  "name": "Append-Tag-From-RG",
+  "type": "Microsoft.Authorization/policyAssignments",
+  "apiVersion": "2024-04-01",
+  "properties": {
+    "displayName": "Append tag and value from resource group",
+    "description": "Appends the specified tag to resources using the value from the resource group when the tag is missing.",
+    "notScopes": [],
+    "parameters": {
+      "tagName": {
+        "value": "${tag_to_inherit}"
+      }
+    },
+    "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/ea3f2387-9b95-492a-a190-fcdc54f7b070",
+    "scope": "${current_scope_resource_id}",
+    "enforcementMode": null
+  },
+  "location": "${default_location}"
+}

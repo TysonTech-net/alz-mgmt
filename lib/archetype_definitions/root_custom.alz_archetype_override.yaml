@@ -9,6 +9,7 @@ policy_assignments_to_add:
     'Deploy-Diag-LogsCat',
     'Enforce-VM-Backups-to-RSV',
     'Enable-Azure-Monitor-VM',
+    'Append-Tag-From-RG',
   ]
 policy_assignments_to_remove: []
 policy_definitions_to_add:
