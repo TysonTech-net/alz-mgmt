@@ -1,78 +1,48 @@
 name: alz_custom
 management_groups:
-  - id: alz
-    display_name: Azure Landing Zones
-    archetypes:
-      - root_custom
+  # Customer root under tenant
+  - id: visplatform
+    display_name: VISPlatform
+    archetypes: [root_custom]
     exists: false
     parent_id: null
 
-  - id: platform
-    display_name: Platform
-    archetypes:
-      - platform_custom
+  # Platform parent
+  - id: visplatform-platform
+    display_name: VISPlatform-Platform
+    archetypes: [platform_custom]
     exists: false
-    parent_id: alz
+    parent_id: visplatform
 
-  - id: landingzones
-    display_name: Landing Zones
-    archetypes:
-      - landing_zones_custom
+  # Platform children (per subscription)
+  - id: visplatform-management
+    display_name: VISPlatform-Management
+    archetypes: [management_custom]
     exists: false
-    parent_id: alz
+    parent_id: visplatform-platform
 
-  - id: corp
-    display_name: Corp
-    archetypes:
-      - corp_custom
+  - id: visplatform-connectivity
+    display_name: VISPlatform-Connectivity
+    archetypes: [connectivity_custom]
     exists: false
-    parent_id: landingzones
+    parent_id: visplatform-platform
 
-  - id: online
-    display_name: Online
-    archetypes:
-      - online_custom
+  - id: visplatform-security
+    display_name: VISPlatform-Security
+    archetypes: [security_custom]
     exists: false
-    parent_id: landingzones
+    parent_id: visplatform-platform
 
-  - id: sandbox
-    display_name: Sandbox
-    archetypes:
-      - sandbox_custom
+  # Application landing zones parent
+  - id: visplatform-application-landing-zones
+    display_name: VISPlatform-Application-Landing-Zones
+    archetypes: [landing_zones_custom]
     exists: false
-    parent_id: alz
+    parent_id: visplatform
 
-  - id: security
-    display_name: Security
-    archetypes:
-      - security_custom
+  # Partner / business unit landing zone
+  - id: audiocodes
+    display_name: AudioCodes
+    archetypes: [landing_zones_custom]
     exists: false
-    parent_id: platform
-
-  - id: management
-    display_name: Management
-    archetypes:
-      - management_custom
-    exists: false
-    parent_id: platform
-
-  - id: connectivity
-    display_name: Connectivity
-    archetypes:
-      - connectivity_custom
-    exists: false
-    parent_id: platform
-
-  - id: identity
-    display_name: Identity
-    archetypes:
-      - identity_custom
-    exists: false
-    parent_id: platform
-
-  - id: decommissioned
-    display_name: Decommissioned
-    archetypes:
-      - decommissioned_custom
-    exists: false
-    parent_id: alz
+    parent_id: visplatform

@@ -247,19 +247,19 @@ management_group_settings = {
   subscription_placement = {
     identity = {
       subscription_id       = "$${subscription_id_identity}"
-      management_group_name = "identity"
+      management_group_name = "visplatform-security"
     }
     connectivity = {
       subscription_id       = "$${subscription_id_connectivity}"
-      management_group_name = "connectivity"
+      management_group_name = "visplatform-connectivity"
     }
     management = {
       subscription_id       = "$${subscription_id_management}"
-      management_group_name = "management"
+      management_group_name = "visplatform-management"
     }
     security = {
       subscription_id       = "$${subscription_id_security}"
-      management_group_name = "security"
+      management_group_name = "visplatform-security"
     }
   }
   policy_assignments_to_modify = {
