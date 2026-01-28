@@ -6,7 +6,7 @@
   "properties": {
     "displayName": "Enable Azure Monitor for Virtual Machines (initiative)",
     "description": "Deploys the Azure Monitor for VMs initiative to configure AMA/Insights and route data to the specified Log Analytics workspace.",
-    "policySetDefinitionId": "/providers/Microsoft.Authorization/policySetDefinitions/924bfe3a-762f-40e7-86dd-5c8b95eb09e6",
+    "policyDefinitionId": "/providers/Microsoft.Authorization/policySetDefinitions/924bfe3a-762f-40e7-86dd-5c8b95eb09e6",
     "parameters": {
       "logAnalytics": {
         "value": "${log_analytics_workspace_id}"
