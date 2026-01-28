@@ -1,6 +1,6 @@
 {
   "$schema": "https://schema.management.azure.com/schemas/2019-09-01/policyAssignment.json#",
-  "name": "Enforce-VM-Backups-to-RSV",
+  "name": "Enforce-VM-Backup-RSV",
   "type": "Microsoft.Authorization/policyAssignments",
   "apiVersion": "2021-06-01",
   "properties": {
