@@ -1,0 +1,82 @@
+{
+  "name": "Enforce-Resource-Tag",
+  "type": "Microsoft.Authorization/policyDefinitions",
+  "apiVersion": "2024-04-01",
+  "properties": {
+    "displayName": "Require a tag on resources (with optional excluded resource types and optional values)",
+    "policyType": "Custom",
+    "mode": "Indexed",
+    "description": "Enforces existence of a tag on resources, and optionally enforces allowed values, except for specified resource types. Does not apply to resource groups.",
+    "metadata": {
+      "version": "1.1.0",
+      "category": "Tags"
+    },
+    "parameters": {
+      "tagName": {
+        "type": "String",
+        "metadata": {
+          "displayName": "Tag Name",
+          "description": "Name of the tag, such as 'Environment'."
+        }
+      },
+      "tagValues": {
+        "type": "Array",
+        "metadata": {
+          "displayName": "Allowed tag values (optional)",
+          "description": "If left empty, any value is allowed as long as the tag exists. If one or more values are provided, the tag must be one of these values."
+        },
+        "defaultValue": []
+      },
+      "excludedResourceTypes": {
+        "type": "Array",
+        "metadata": {
+          "displayName": "Excluded resource types",
+          "description": "Resource types to exclude from this policy, for example 'microsoft.compute/virtualmachines/extensions' or 'microsoft.network/networkwatchers'."
+        },
+        "defaultValue": []
+      },
+      "effect": {
+        "type": "String",
+        "allowedValues": ["Audit", "Deny", "Disabled"],
+        "defaultValue": "Deny",
+        "metadata": {
+          "displayName": "Effect",
+          "description": "Enable or disable the execution of the policy."
+        }
+      }
+    },
+    "policyRule": {
+      "if": {
+        "allOf": [
+          {
+            "field": "type",
+            "notIn": "[parameters('excludedResourceTypes')]"
+          },
+          {
+            "anyOf": [
+              {
+                "field": "[concat('tags[', parameters('tagName'), ']')]",
+                "exists": false
+              },
+              {
+                "allOf": [
+                  {
+                    "value": "[length(parameters('tagValues'))]",
+                    "greater": 0
+                  },
+                  {
+                    "field": "[concat('tags[', parameters('tagName'), ']')]",
+                    "notIn": "[parameters('tagValues')]"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "then": {
+        "effect": "[parameters('effect')]"
+      }
+    }
+  }
+}

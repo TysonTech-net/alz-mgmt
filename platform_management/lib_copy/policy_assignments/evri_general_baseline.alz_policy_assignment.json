@@ -1,0 +1,29 @@
+{
+  "name": "PA-Evri-General-Baseline",
+  "type": "Microsoft.Authorization/policyAssignments",
+  "apiVersion": "2024-04-01",
+  "properties": {
+    "displayName": "EVRi General Baseline",
+    "description": "MC: Policy Assignment for our General baseline (PI-Evri-General-Baseline) applied at the 'Evri' management group level.",
+    "notScopes": [],
+    "parameters": {},
+    "nonComplianceMessages": [
+      {
+        "message": "Resource location must be within the approved regions for EVRi.",
+        "policyDefinitionReferenceId": "AllowedLocations-001"
+      },
+      {
+        "message": "Virtual machine size must be one of the approved SKUs for EVRi.",
+        "policyDefinitionReferenceId": "AllowedVmSizes-001"
+      },
+      {
+        "message": "Azure Hybrid Benefit should be enabled where eligible (AHUB audit).",
+        "policyDefinitionReferenceId": "Audit-AHUB-001"
+      }
+    ],
+    "policyDefinitionId": "/providers/Microsoft.Authorization/policySetDefinitions/PI-Evri-General-Baseline",
+    "scope": "${current_scope_resource_id}"
+  },
+  "location": "${default_location}",
+  "identity": { "type": "SystemAssigned" }
+}

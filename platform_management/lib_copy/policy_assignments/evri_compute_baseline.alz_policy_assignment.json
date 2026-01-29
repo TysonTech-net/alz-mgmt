@@ -1,0 +1,27 @@
+{
+  "name": "PA-Evri-Compute-Baseline",
+  "type": "Microsoft.Authorization/policyAssignments",
+  "apiVersion": "2024-04-01",
+  "properties": {
+    "displayName": "EVRi Compute Baseline",
+    "description": "MC: Policy Assignment for our initiative policy for compute (PI-Evri-Compute-Baseline) applied at the Evri management group level for auditing.",
+    "notScopes": [],
+    "parameters": {},
+    "nonComplianceMessages": [
+      {
+        "message": "Virtual machines must have boot diagnostics enabled",
+        "policyDefinitionReferenceId": "PD-Compute-BootDiagnostics-001"
+      },
+      {
+        "message": "Only approved VM extensions should be installed on virtual machines",
+        "policyDefinitionReferenceId": "PD-Compute-ApprovedExtensions-001"
+      }
+    ],
+    "policyDefinitionId": "/providers/Microsoft.Authorization/policySetDefinitions/PI-Evri-Compute-Baseline",
+    "scope": "${current_scope_resource_id}"
+  },
+  "location": "${default_location}",
+  "identity": {
+    "type": "SystemAssigned"
+  }
+}

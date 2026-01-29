@@ -1,0 +1,85 @@
+name: alz_custom
+management_groups:
+  - id: evri
+    display_name: EVRi
+    archetypes:
+      - root_custom
+    exists: false
+    parent_id: null
+
+  - id: evri-platform
+    display_name: EVRi Platform
+    archetypes:
+      - platform_custom
+    exists: false
+    parent_id: evri
+
+  # - id: evri-landingzones
+  #   display_name: EVRi Landing Zones
+  #   archetypes:
+  #     - landing_zones_custom
+  #   exists: false
+  #   parent_id: evri
+
+  # - id: evri-corp
+  #   display_name: EVRi Corp
+  #   archetypes:
+  #     - corp_custom
+  #   exists: false
+  #   parent_id: evri-landingzones
+
+  # - id: evri-online
+  #   display_name: EVRi Online
+  #   archetypes:
+  #     - online_custom
+  #   exists: false
+  #   parent_id: evri-landingzones
+
+  - id: evri-sandbox
+    display_name: EVRi Sandbox
+    archetypes:
+      - sandbox_custom
+    exists: false
+    parent_id: evri
+
+  - id: evri-security
+    display_name: EVRi Security
+    archetypes:
+      - security_custom
+    exists: false
+    parent_id: evri-platform
+
+  - id: evri-management
+    display_name: EVRi Management
+    archetypes:
+      - management_custom
+    exists: false
+    parent_id: evri-platform
+
+  - id: evri-connectivity
+    display_name: EVRi Connectivity
+    archetypes:
+      - connectivity_custom
+    exists: false
+    parent_id: evri-platform
+
+  - id: evri-identity
+    display_name: EVRi Identity
+    archetypes:
+      - identity_custom
+    exists: false
+    parent_id: evri-platform
+
+  # - id: evri-local
+  #   display_name: EVRi Local
+  #   archetypes:
+  #     - local_custom
+  #   exists: false
+  #   parent_id: evri-platform
+
+  - id: evri-decommissioned
+    display_name: EVRi Decommissioned
+    archetypes:
+      - decommissioned_custom
+    exists: false
+    parent_id: evri
