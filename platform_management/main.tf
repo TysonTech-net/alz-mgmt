@@ -19,7 +19,6 @@ locals {
   base_tags = merge(
     {
       deployed_by = "terraform"
-      org         = var.naming.org
       env         = var.naming.env
       workload    = var.naming.workload
       instance    = var.naming.instance
@@ -40,7 +39,7 @@ locals {
         },
         coalesce(hub.tags, {})
       )
-      name_prefix    = "${var.naming.org}-${var.naming.workload}-${var.naming.env}"
+      name_prefix    = "${var.naming.workload}-${var.naming.env}"
     })
   }
 }

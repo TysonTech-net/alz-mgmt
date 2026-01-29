@@ -11,7 +11,6 @@ starter_locations_short = {
 }
 
 naming = {
-  org      = "vis"
   env      = "prod"
   workload = "mgmt"
   instance = "001"

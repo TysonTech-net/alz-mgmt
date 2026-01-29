@@ -19,7 +19,6 @@ variable "starter_locations_short" {
 variable "naming" {
   description = "Base naming tokens."
   type = object({
-    org      = string
     env      = string
     workload = string
     instance = string
