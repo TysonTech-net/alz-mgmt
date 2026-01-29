@@ -1,0 +1,39 @@
+{
+  "name": "PI-Evri-Cost-Baseline",
+  "type": "Microsoft.Authorization/policySetDefinitions",
+  "apiVersion": "2024-04-01",
+  "properties": {
+    "policyType": "Custom",
+    "displayName": "EVRi Cost Baseline",
+    "description": "MC: Policy Initiative for baseline Cost scoped at the Evri management group layer. Includes audit for unused Disks, Public IPs and App Service plans.",
+    "metadata": { "version": "1.0.0", "category": "Cost Optimization" },
+    "parameters": {},
+    "policyDefinitions": [
+      {
+        "policyDefinitionReferenceId": "PD-Cost-UnusedDisks-001",
+        "policyDefinitionId": "/providers/Microsoft.Management/managementGroups/evri/providers/Microsoft.Authorization/policyDefinitions/Audit-Disks-UnusedResourcesCostOptimization",
+        "parameters": {},
+        "groupNames": ["Resource-Baseline-Cost"]
+      },
+      {
+        "policyDefinitionReferenceId": "PD-Cost-UnusedPublicIP-001",
+        "policyDefinitionId": "/providers/Microsoft.Management/managementGroups/evri/providers/Microsoft.Authorization/policyDefinitions/Audit-PublicIpAddresses-UnusedResourcesCostOptimization",
+        "parameters": {},
+        "groupNames": ["Resource-Baseline-Cost"]
+      },
+      {
+        "policyDefinitionReferenceId": "PD-Cost-UnusedServerFarms-001",
+        "policyDefinitionId": "/providers/Microsoft.Management/managementGroups/evri/providers/Microsoft.Authorization/policyDefinitions/Audit-ServerFarms-UnusedResourcesCostOptimization",
+        "parameters": {},
+        "groupNames": ["Resource-Baseline-Cost"]
+      }
+    ],
+    "policyDefinitionGroups": [
+      {
+        "name": "Resource-Baseline-Cost",
+        "displayName": "Resource Baseline - Cost",
+        "description": "MC: Group for Cost baseline to allow easier management and grouping."
+      }
+    ]
+  }
+}

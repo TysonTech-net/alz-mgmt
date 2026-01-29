@@ -1,0 +1,57 @@
+{
+  "name": "PI-Evri-Net-Sec-Baseline",
+  "type": "Microsoft.Authorization/policySetDefinitions",
+  "apiVersion": "2024-04-01",
+  "properties": {
+    "policyType": "Custom",
+    "displayName": "EVRi Network Security Baseline",
+    "description": "MC: Policy Initiative for network security baseline (no NIC public IPs, no IP forwarding, Network Watcher, NSG on subnets, NSG flow logs + Traffic Analytics).",
+    "metadata": { "version": "1.0.0", "category": "Network" },
+    "parameters": {},
+    "policyDefinitions": [
+      {
+        "policyDefinitionReferenceId": "NIC-No-PublicIP-001",
+        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/83a86a26-fd1f-447c-b59d-e51f44264114",
+        "parameters": {},
+        "groupNames": ["Resource-Baseline-Networking"]
+      },
+      {
+        "policyDefinitionReferenceId": "NIC-No-IPForward-001",
+        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/88c0b9da-ce96-4b03-9635-f29a937e2900",
+        "parameters": {},
+        "groupNames": ["Resource-Baseline-Networking"]
+      },
+      {
+        "policyDefinitionReferenceId": "NW-Watcher-Enabled-001",
+        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/b6e2945c-0b7b-40f5-9233-7a5323b5cdc6",
+        "parameters": {},
+        "groupNames": ["Resource-Baseline-Networking"]
+      },
+      {
+        "policyDefinitionReferenceId": "Subnets-NSG-001",
+        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/e71308d3-144b-4262-b144-efdc3cc90517",
+        "parameters": {},
+        "groupNames": ["Resource-Baseline-Networking"]
+      },
+      {
+        "policyDefinitionReferenceId": "FlowLogs-Enabled-001",
+        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/27960feb-a23c-4577-8d36-ef8b5f35e0be",
+        "parameters": {},
+        "groupNames": ["Resource-Baseline-Networking"]
+      },
+      {
+        "policyDefinitionReferenceId": "TA-Enabled-001",
+        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/2f080164-9f4d-497e-9db6-416dc9f7b48a",
+        "parameters": {},
+        "groupNames": ["Resource-Baseline-Networking"]
+      }
+    ],
+    "policyDefinitionGroups": [
+      {
+        "name": "Resource-Baseline-Networking",
+        "displayName": "Resource Baseline - Networking",
+        "description": "Grouping for networking baseline."
+      }
+    ]
+  }
+}
