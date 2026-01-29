@@ -1,6 +1,0 @@
-# SCC custom archetype definition for local management group
-name: local_custom
-policy_assignments: ['PA-Evri-Net-Sec-Baseline']
-policy_definitions: []
-policy_set_definitions: []
-role_definitions: []

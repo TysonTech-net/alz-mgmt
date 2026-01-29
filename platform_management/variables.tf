@@ -1,26 +1,3 @@
-variable "starter_locations" {
-  type        = list(string)
-  description = "The default for Azure resources. (e.g 'uksouth')"
-  validation {
-    condition     = length(var.starter_locations) > 0
-    error_message = "You must provide at least one starter location region."
-  }
-}
-
-variable "starter_locations_short" {
-  type        = map(string)
-  default     = {}
-  description = <<DESCRIPTION
-Optional overrides for the starter location short codes.
-
-Keys should match the built-in replacement names used in the examples, for example:
-- starter_location_01_short
-- starter_location_02_short
-
-If not provided, short codes are derived from the regions module using geo_code when available, falling back to short_name when no geo_code is published.
-DESCRIPTION
-}
-
 variable "subscription_ids" {
   description = "The list of subscription IDs to deploy the Platform Landing Zones into"
   type        = map(string)
@@ -36,67 +13,85 @@ variable "subscription_ids" {
   }
 }
 
-variable "subscription_id_connectivity" {
-  description = "DEPRECATED (use subscription_ids instead): The identifier of the Connectivity Subscription"
-  type        = string
-  default     = null
+variable "starter_locations" {
+  type        = list(string)
+  description = "The default for Azure resources. (e.g 'uksouth')"
   validation {
-    condition     = var.subscription_id_connectivity == null || can(regex("^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})$", var.subscription_id_connectivity))
-    error_message = "The subscription ID must be a valid GUID"
+    condition     = length(var.starter_locations) > 0
+    error_message = "You must provide at least one starter location region."
   }
 }
 
-variable "subscription_id_identity" {
-  description = "DEPRECATED (use subscription_ids instead): The identifier of the Identity Subscription"
+variable "customer" {
+  description = "The organization name used in resource names."
   type        = string
-  default     = null
+}
+
+variable "connectivity_mode" {
+  description = "How to connect the spoke: 'vwan' (Virtual WAN hub) or 'hubvnet' (classic hub-and-spoke VNet)."
+  type        = string
+  default     = "vwan"
   validation {
-    condition     = var.subscription_id_identity == null || can(regex("^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})$", var.subscription_id_identity))
-    error_message = "The subscription ID must be a valid GUID"
+    condition     = contains(["vwan", "hubvnet"], var.connectivity_mode)
+    error_message = "connectivity_mode must be 'vwan' or 'hubvnet'."
   }
 }
 
-variable "subscription_id_management" {
-  description = "DEPRECATED (use subscription_ids instead): The identifier of the Management Subscription"
-  type        = string
-  default     = null
-  validation {
-    condition     = var.subscription_id_management == null || can(regex("^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})$", var.subscription_id_management))
-    error_message = "The subscription ID must be a valid GUID"
-  }
-}
-
-variable "root_parent_management_group_id" {
-  type        = string
-  default     = ""
-  description = "This is the id of the management group that the ALZ hierarchy will be nested under, will default to the Tenant Root Group"
-}
-
-variable "enable_telemetry" {
-  type        = bool
-  default     = true
-  description = "Flag to enable/disable telemetry"
-}
-
-variable "custom_replacements" {
+variable "spoke_network_config_primary" {
+  description = "Inputs for the management spoke networking module."
   type = object({
-    names                      = optional(map(string), {})
-    resource_group_identifiers = optional(map(string), {})
-    resource_identifiers       = optional(map(string), {})
+    resource_group = object({
+      name = string
+      tags = map(string)
+    })
+    virtual_network_settings = object({
+      name          = string
+      address_space = list(string)
+      dns_servers   = optional(list(string), [])
+    })
+    subnets                 = map(any)
+    network_security_groups = map(any)
+    route_tables            = map(any)
+    common_routes           = list(any)
+    tags                    = map(string)
   })
-  default = {
-    names                      = {}
-    resource_group_identifiers = {}
-    resource_identifiers       = {}
-  }
-  description = "Custom replacements"
 }
 
 variable "tags" {
+  description = "Tags to apply to resources."
   type        = map(string)
-  default     = null
-  description = "(Optional) Tags of the resource."
+  default     = {}
 }
 
+# vWAN option: look up by name + RG in the CONNECTIVITY subscription
+variable "connectivity_vhub_primary" {
+  description = "Existing Virtual Hub (used when connectivity_mode == 'vwan')."
+  type = object({
+    name                = string
+    resource_group_name = string
+  })
+  default = null
+}
 
+# Hub VNet option: look up by name + RG in the CONNECTIVITY subscription
+variable "connectivity_hub_vnet" {
+  description = "Existing Hub VNet (used when connectivity_mode == 'hubvnet')."
+  type = object({
+    name                = string
+    resource_group_name = string
+  })
+  default = null
+}
 
+variable "windows_virtual_machines" {
+  description = "Configuration for Windows Virtual Machines to be deployed in the identity spoke."
+  type        = map(any)
+  default     = {}
+}
+
+variable "vm_admin_password" {
+  description = "The admin password for the Virtual Machines."
+  type        = string
+  sensitive   = true
+  default     = ""
+}
