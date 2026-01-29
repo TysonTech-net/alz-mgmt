@@ -16,13 +16,30 @@ locals {
     )
   }
 
-  base_tags = merge({ deployed_by = "terraform" }, coalesce(var.tags, {}))
+  base_tags = merge(
+    {
+      deployed_by = "terraform"
+      org         = var.naming.org
+      env         = var.naming.env
+      workload    = var.naming.workload
+      instance    = var.naming.instance
+    },
+    coalesce(var.tags, {})
+  )
 
   hubs = {
     for key, hub in var.hubs :
     key => merge(hub, {
       location_short = coalesce(hub.location_short, local.location_short_lookup[hub.location])
-      tags           = merge(local.base_tags, coalesce(hub.tags, {}))
+      tags = merge(
+        local.base_tags,
+        {
+          region       = hub.location
+          region_short = coalesce(hub.location_short, local.location_short_lookup[hub.location])
+          hub_key      = key
+        },
+        coalesce(hub.tags, {})
+      )
       name_prefix    = "${var.naming.org}-${var.naming.workload}-${var.naming.env}"
     })
   }
