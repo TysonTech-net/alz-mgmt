@@ -1,0 +1,61 @@
+subscription_ids = {
+  management   = "f09a5d16-c8db-4d7c-bce4-a2781c659cde"
+  connectivity = "91f98b99-3946-4096-8191-1078a530c5fd"
+}
+
+starter_locations = ["uksouth", "ukwest"]
+
+starter_locations_short = {
+  uksouth = "uks"
+  ukwest  = "ukw"
+}
+
+naming = {
+  org      = "vis"
+  env      = "prod"
+  workload = "mgmt"
+  instance = "001"
+}
+
+hubs = {
+  primary = {
+    location                = "uksouth"
+    resource_group_name     = "rg-mgmt-prod-mgmt-uks-001"
+    hub_vnet_id             = "/subscriptions/91f98b99-3946-4096-8191-1078a530c5fd/resourceGroups/rg-hub-prod-network-uks-001/providers/Microsoft.Network/virtualNetworks/vnet-hub-prod-uks-001"
+    hub_resource_group_name = "rg-hub-prod-network-uks-001"
+    virtual_network_settings = {
+      name          = "vnet-mgmt-prod-uks-001"
+      address_space = ["10.10.0.0/22"]
+      peer_to_hub   = true
+    }
+    subnets                 = {}
+    network_security_groups = {}
+    route_tables            = {}
+    common_routes           = []
+    tags = {
+      env    = "prod"
+      region = "uks"
+    }
+  }
+  secondary = {
+    location                = "ukwest"
+    resource_group_name     = "rg-mgmt-prod-mgmt-ukw-001"
+    hub_vnet_id             = "/subscriptions/91f98b99-3946-4096-8191-1078a530c5fd/resourceGroups/rg-hub-prod-network-ukw-001/providers/Microsoft.Network/virtualNetworks/vnet-hub-prod-ukw-001"
+    hub_resource_group_name = "rg-hub-prod-network-ukw-001"
+    virtual_network_settings = {
+      name          = "vnet-mgmt-prod-ukw-001"
+      address_space = ["10.11.0.0/22"]
+      peer_to_hub   = true
+    }
+    subnets                 = {}
+    network_security_groups = {}
+    route_tables            = {}
+    common_routes           = []
+    tags = {
+      env    = "prod"
+      region = "ukw"
+    }
+  }
+}
+
+vms = {}
