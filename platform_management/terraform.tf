@@ -14,7 +14,7 @@ terraform {
 }
 
 provider "azurerm" {
-  subscription_id = var.subscription_ids["security"]
+  subscription_id = var.subscription_ids["management"]
   features {
     resource_group {
       prevent_deletion_if_contains_resources = false
@@ -22,10 +22,11 @@ provider "azurerm" {
   }
 }
 
+# Connectivity lookup (hub VNets live in the connectivity subscription)
 provider "azurerm" {
-  resource_provider_registrations = "none"
   alias                           = "connectivity"
   subscription_id                 = var.subscription_ids["connectivity"]
+  resource_provider_registrations = "none"
   features {
     resource_group {
       prevent_deletion_if_contains_resources = false

@@ -5,17 +5,25 @@ module "regions" {
 }
 
 locals {
-  primary_location       = var.starter_locations[0]
-  primary_location_short = module.regions.regions_by_name_or_display_name[local.primary_location].geo_code
-
-  base_name_primary = "shared-security-prod-${local.primary_location_short}"
-
-  baseline_tags = {
-    deployed_by = "terraform"
+  # Build lookup of short codes, preferring user-provided values, else regions module geo_code/short_name
+  location_short_lookup = {
+    for loc in var.starter_locations :
+    loc => coalesce(
+      try(var.starter_locations_short[loc], null),
+      try(var.starter_locations_short["starter_${index(var.starter_locations, loc) + 1}_short"], null),
+      try(module.regions.regions_by_name_or_display_name[loc].geo_code, null),
+      try(module.regions.regions_by_name_or_display_name[loc].short_name, loc)
+    )
   }
 
-  final_tags = merge(
-    local.baseline_tags,
-    coalesce(var.tags, {})
-  )
+  base_tags = merge({ deployed_by = "terraform" }, coalesce(var.tags, {}))
+
+  hubs = {
+    for key, hub in var.hubs :
+    key => merge(hub, {
+      location_short = coalesce(hub.location_short, local.location_short_lookup[hub.location])
+      tags           = merge(local.base_tags, coalesce(hub.tags, {}))
+      name_prefix    = "${var.naming.org}-${var.naming.workload}-${var.naming.env}"
+    })
+  }
 }

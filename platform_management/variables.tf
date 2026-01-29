@@ -1,97 +1,96 @@
 variable "subscription_ids" {
-  description = "The list of subscription IDs to deploy the Platform Landing Zones into"
+  description = "Subscription IDs used by this stack."
   type        = map(string)
-  default     = {}
   nullable    = false
-  validation {
-    condition     = length(var.subscription_ids) == 0 || alltrue([for id in values(var.subscription_ids) : can(regex("^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})$", id))])
-    error_message = "All subscription IDs must be valid GUIDs"
-  }
-  validation {
-    condition     = length(var.subscription_ids) == 0 || alltrue([for id in keys(var.subscription_ids) : contains(["management", "connectivity", "identity", "security"], id)])
-    error_message = "The keys of the subscription_ids map must be one of 'management', 'connectivity', 'identity' or 'security'"
-  }
 }
 
 variable "starter_locations" {
+  description = "Regions to deploy hubs into (order defines primary/secondary, etc.)."
   type        = list(string)
-  description = "The default for Azure resources. (e.g 'uksouth')"
-  validation {
-    condition     = length(var.starter_locations) > 0
-    error_message = "You must provide at least one starter location region."
-  }
+  nullable    = false
 }
 
-variable "customer" {
-  description = "The organization name used in resource names."
-  type        = string
+variable "starter_locations_short" {
+  description = "Optional map of region to short code (overrides auto-derived)."
+  type        = map(string)
+  default     = {}
 }
 
-variable "connectivity_mode" {
-  description = "How to connect the spoke: 'vwan' (Virtual WAN hub) or 'hubvnet' (classic hub-and-spoke VNet)."
-  type        = string
-  default     = "vwan"
-  validation {
-    condition     = contains(["vwan", "hubvnet"], var.connectivity_mode)
-    error_message = "connectivity_mode must be 'vwan' or 'hubvnet'."
-  }
-}
-
-variable "spoke_network_config_primary" {
-  description = "Inputs for the management spoke networking module."
+variable "naming" {
+  description = "Base naming tokens."
   type = object({
-    resource_group = object({
-      name = string
-      tags = map(string)
-    })
+    org      = string
+    env      = string
+    workload = string
+    instance = string
+  })
+}
+
+variable "hubs" {
+  description = "Per-region hub/spoke settings (hubvnet mode only). Key is logical hub name."
+  type = map(object({
+    location                = string
+    location_short          = optional(string)
+    resource_group_name     = string
+    hub_vnet_id             = string
+    hub_resource_group_name = string
     virtual_network_settings = object({
-      name          = string
-      address_space = list(string)
-      dns_servers   = optional(list(string), [])
+      name                    = string
+      address_space           = list(string)
+      dns_servers             = optional(list(string), [])
+      flow_timeout_in_minutes = optional(number)
+      ddos_protection_plan_id = optional(string)
+      enable_ddos_protection  = optional(bool, false)
+      peer_to_hub             = optional(bool, true)
+      peer_to_hub_settings    = optional(any, {})
     })
     subnets                 = map(any)
     network_security_groups = map(any)
     route_tables            = map(any)
     common_routes           = list(any)
-    tags                    = map(string)
-  })
+    tags                    = optional(map(string), {})
+  }))
+  default = {}
 }
 
-variable "tags" {
-  description = "Tags to apply to resources."
-  type        = map(string)
-  default     = {}
-}
-
-# vWAN option: look up by name + RG in the CONNECTIVITY subscription
-variable "connectivity_vhub_primary" {
-  description = "Existing Virtual Hub (used when connectivity_mode == 'vwan')."
-  type = object({
+variable "vms" {
+  description = "Virtual machines to deploy (keyed by name)."
+  type = map(object({
     name                = string
+    hub_key             = string
     resource_group_name = string
-  })
-  default = null
-}
-
-# Hub VNet option: look up by name + RG in the CONNECTIVITY subscription
-variable "connectivity_hub_vnet" {
-  description = "Existing Hub VNet (used when connectivity_mode == 'hubvnet')."
-  type = object({
-    name                = string
-    resource_group_name = string
-  })
-  default = null
-}
-
-variable "windows_virtual_machines" {
-  description = "Configuration for Windows Virtual Machines to be deployed in the identity spoke."
-  type        = map(any)
-  default     = {}
+    subnet_key          = string
+    private_ip_address  = string
+    sku_size            = string
+    zone                = optional(number, 1)
+    license_type        = optional(string, "Windows_Server")
+    image = object({
+      publisher = string
+      offer     = string
+      sku       = string
+      version   = optional(string, "latest")
+    })
+    os_disk = object({
+      disk_size_gb         = number
+      storage_account_type = optional(string, "Premium_LRS")
+      caching              = optional(string, "ReadWrite")
+    })
+    admin_username = optional(string, "azureadmin")
+    extensions     = optional(map(any), {})
+    tags           = optional(map(string), {})
+  }))
+  default = {}
 }
 
 variable "vm_admin_password" {
-  description = "The admin password for the Virtual Machines."
+  description = "Admin password for VMs."
   type        = string
   sensitive   = true
   default     = ""
+}
+
+variable "tags" {
+  description = "Base tags applied to all resources."
+  type        = map(string)
+  default     = {}
 }
