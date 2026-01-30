@@ -1,34 +1,34 @@
 # Single VNet outputs
 output "virtual_network_id" {
   description = "ID of the virtual network."
-  value       = azurerm_virtual_network.this.id
+  value       = module.vnet.resource_id
 }
 
 output "virtual_network_name" {
   description = "Name of the virtual network."
-  value       = azurerm_virtual_network.this.name
+  value       = module.vnet.name
 }
 
 # Subnet outputs (keyed by subnet logical key)
 output "subnet_ids" {
   description = "Map of subnet IDs, keyed by subnet logical key."
-  value       = { for k, s in azapi_resource.subnet : k => s.id }
+  value       = { for k, s in module.vnet.subnets : k => s.resource_id }
 }
 
 output "subnet_names" {
   description = "Map of subnet names, keyed by subnet logical key."
-  value       = { for k, s in azapi_resource.subnet : k => s.name }
+  value       = { for k, s in module.vnet.subnets : k => s.name }
 }
 
 # NSG & RT outputs (still maps)
 output "network_security_group_ids" {
   description = "Map of NSG IDs, keyed by logical name."
-  value       = { for k, n in azurerm_network_security_group.this : k => n.id }
+  value       = { for k, n in module.nsg : k => n.resource_id }
 }
 
 output "route_table_ids" {
   description = "Map of route table IDs, keyed by logical name."
-  value       = { for k, r in azurerm_route_table.this : k => r.id }
+  value       = { for k, r in module.rt : k => r.resource_id }
 }
 
 # Hub connectivity outputs
@@ -44,5 +44,5 @@ output "peering_hub_to_spoke_id" {
 
 output "vwan_connection_id" {
   description = "ID of the vWAN hub connection (vwan mode). Null if not created."
-  value       = try(azurerm_virtual_hub_connection.this[0].id, null)
+  value       = null
 }

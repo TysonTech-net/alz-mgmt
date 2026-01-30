@@ -24,6 +24,7 @@ module "spoke_network" {
   location_short = each.value.location_short
 
   resource_group_name      = azurerm_resource_group.network[each.key].name
+  resource_group_id        = azurerm_resource_group.network[each.key].id
   virtual_network_settings = each.value.virtual_network_settings
   subnets                  = each.value.subnets
   network_security_groups  = each.value.network_security_groups

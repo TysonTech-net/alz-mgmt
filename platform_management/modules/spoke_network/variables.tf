@@ -24,6 +24,11 @@ variable "resource_group_name" {
   type        = string
 }
 
+variable "resource_group_id" {
+  description = "The resource group ID in which to create all resources."
+  type        = string
+}
+
 ##############################################
 # VNet settings (single spoke)
 ##############################################
