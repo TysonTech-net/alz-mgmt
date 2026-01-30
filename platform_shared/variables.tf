@@ -82,46 +82,6 @@ variable "enable_telemetry" {
   description = "Flag to enable/disable telemetry"
 }
 
-# AMBA monitoring variables
-variable "amba_monitoring_resource_group_name" {
-  description = "Resource group name for AMBA monitoring resources."
-  type        = string
-}
-
-variable "user_assigned_managed_identity_name" {
-  description = "Name of the AMBA user-assigned managed identity."
-  type        = string
-}
-
-variable "bring_your_own_user_assigned_managed_identity" {
-  description = "Set true to use an existing AMBA managed identity instead of deploying one."
-  type        = bool
-  default     = false
-}
-
-variable "management_subscription_id" {
-  description = "Management subscription ID override for AMBA (optional)."
-  type        = string
-  default     = null
-}
-
-variable "action_group_email" {
-  description = "Email for AMBA action group notifications."
-  type        = string
-}
-
-variable "action_group_arm_role_id" {
-  description = "ARM role ID for AMBA action group (optional)."
-  type        = string
-  default     = ""
-}
-
-variable "alert_severity" {
-  description = "Default alert severity for AMBA Deploy-AMBA-Notification assignment (e.g., Sev3)."
-  type        = string
-  default     = "Sev3"
-}
-
 variable "custom_replacements" {
   type = object({
     names                      = optional(map(string), {})
