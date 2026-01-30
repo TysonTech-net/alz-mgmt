@@ -82,6 +82,46 @@ variable "enable_telemetry" {
   description = "Flag to enable/disable telemetry"
 }
 
+# AMBA monitoring variables
+variable "amba_monitoring_resource_group_name" {
+  description = "Resource group name for AMBA monitoring resources."
+  type        = string
+}
+
+variable "user_assigned_managed_identity_name" {
+  description = "Name of the AMBA user-assigned managed identity."
+  type        = string
+}
+
+variable "bring_your_own_user_assigned_managed_identity" {
+  description = "Set true to use an existing AMBA managed identity instead of deploying one."
+  type        = bool
+  default     = false
+}
+
+variable "management_subscription_id" {
+  description = "Management subscription ID override for AMBA (optional)."
+  type        = string
+  default     = null
+}
+
+variable "action_group_email" {
+  description = "Email for AMBA action group notifications."
+  type        = string
+}
+
+variable "action_group_arm_role_id" {
+  description = "ARM role ID for AMBA action group (optional)."
+  type        = string
+  default     = ""
+}
+
+variable "alert_severity" {
+  description = "Default alert severity for AMBA Deploy-AMBA-Notification assignment (e.g., Sev3)."
+  type        = string
+  default     = "Sev3"
+}
+
 variable "custom_replacements" {
   type = object({
     names                      = optional(map(string), {})
@@ -100,130 +140,4 @@ variable "tags" {
   type        = map(string)
   default     = null
   description = "(Optional) Tags of the resource."
-}
-
-variable "amba_monitoring_resource_group_name" {
-  description = "Resource group name for AMBA monitoring resources. Should follow your CAF RG convention."
-  type        = string
-  default     = null
-}
-
-variable "location" {
-  description = "Location for AMBA resources (defaults to starter_locations[0])."
-  type        = string
-  default     = null
-}
-
-variable "management_subscription_id" {
-  description = "Management subscription ID override for AMBA (optional)."
-  type        = string
-  default     = null
-}
-
-variable "resource_group_name" {
-  description = "Resource group name for AMBA resources (overrides amba_monitoring_resource_group_name)."
-  type        = string
-  default     = null
-}
-
-variable "user_assigned_managed_identity_name" {
-  description = "Name of the AMBA user-assigned managed identity."
-  type        = string
-  default     = "id-amba-prod-001"
-}
-
-variable "bring_your_own_user_assigned_managed_identity" {
-  description = "Set true to bring your own UAMI instead of deploying one."
-  type        = bool
-  default     = false
-}
-
-variable "bring_your_own_user_assigned_managed_identity_resource_id" {
-  description = "Resource ID of BYO UAMI if bring_your_own_user_assigned_managed_identity is true."
-  type        = string
-  default     = null
-}
-
-variable "alert_severity" {
-  description = "Default AMBA alert severity (e.g., Sev3)."
-  type        = string
-  default     = "Sev3"
-}
-
-variable "amba_disable_tag_name" {
-  description = "Tag name to disable AMBA policies."
-  type        = string
-  default     = "amba_disable"
-}
-
-variable "amba_disable_tag_values" {
-  description = "Tag values to disable AMBA policies."
-  type        = list(string)
-  default     = ["true"]
-}
-
-variable "action_group_email" {
-  description = "Email for AMBA action group notifications."
-  type        = string
-  default     = ""
-}
-
-variable "action_group_arm_role_id" {
-  description = "ARM role ID for action group (optional)."
-  type        = string
-  default     = ""
-}
-
-variable "webhook_service_uri" {
-  description = "Webhook URI for AMBA action group (optional)."
-  type        = string
-  default     = ""
-}
-
-variable "event_hub_resource_id" {
-  description = "Event Hub resource ID for AMBA (optional)."
-  type        = string
-  default     = ""
-}
-
-variable "function_resource_id" {
-  description = "Function app resource ID for AMBA (optional)."
-  type        = string
-  default     = ""
-}
-
-variable "function_trigger_uri" {
-  description = "Function trigger URL for AMBA (optional)."
-  type        = string
-  default     = ""
-}
-
-variable "logic_app_resource_id" {
-  description = "Logic App resource ID for AMBA (optional)."
-  type        = string
-  default     = ""
-}
-
-variable "logic_app_callback_url" {
-  description = "Logic App callback URL for AMBA (optional)."
-  type        = string
-  default     = ""
-}
-
-variable "bring_your_own_alert_processing_rule_resource_id" {
-  description = "BYO alert processing rule resource ID (optional)."
-  type        = string
-  default     = ""
-}
-
-variable "bring_your_own_action_group_resource_id" {
-  description = "BYO action group resource ID (optional)."
-  type        = string
-  default     = ""
-}
-
-variable "architecture_definition_path" {
-  description = "Path to the ALZ architecture definition file (YAML/JSON) used to derive the root management group."
-  type        = string
-  default     = null
 }
