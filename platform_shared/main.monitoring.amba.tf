@@ -39,6 +39,71 @@ variable "alert_severity" {
   default     = "Sev3"
 }
 
+variable "root_parent_management_group_name" {
+  description = "Root management group name for AMBA policy assignment."
+  type        = string
+}
+
+variable "amba_disable_tag_name" {
+  description = "Tag name to disable AMBA policies."
+  type        = string
+  default     = "amba_disable"
+}
+
+variable "amba_disable_tag_values" {
+  description = "Tag values to disable AMBA policies."
+  type        = list(string)
+  default     = ["true"]
+}
+
+variable "webhook_service_uri" {
+  description = "Webhook URI for AMBA action group (optional)."
+  type        = string
+  default     = ""
+}
+
+variable "event_hub_resource_id" {
+  description = "Event Hub resource ID for AMBA (optional)."
+  type        = string
+  default     = ""
+}
+
+variable "function_resource_id" {
+  description = "Function app resource ID for AMBA (optional)."
+  type        = string
+  default     = ""
+}
+
+variable "function_trigger_uri" {
+  description = "Function trigger URL for AMBA (optional)."
+  type        = string
+  default     = ""
+}
+
+variable "logic_app_resource_id" {
+  description = "Logic App resource ID for AMBA (optional)."
+  type        = string
+  default     = ""
+}
+
+variable "logic_app_callback_url" {
+  description = "Logic App callback URL for AMBA (optional)."
+  type        = string
+  default     = ""
+}
+
+variable "bring_your_own_alert_processing_rule_resource_id" {
+  description = "BYO alert processing rule resource ID (optional)."
+  type        = string
+  default     = ""
+}
+
+variable "bring_your_own_action_group_resource_id" {
+  description = "BYO action group resource ID (optional)."
+  type        = string
+  default     = ""
+}
+
 locals {
   amba_location = var.starter_locations[0]
   amba_rg_name  = var.amba_monitoring_resource_group_name
@@ -67,12 +132,12 @@ module "amba_policy" {
   location           = local.amba_location
   parent_resource_id = data.azapi_client_config.current.tenant_id
   policy_default_values = {
-    amba_alz_management_subscription_id            = jsonencode({ value = var.management_subscription_id != "" ? var.management_subscription_id : data.azapi_client_config.current.subscription_id })
+    amba_alz_management_subscription_id            = jsonencode({ value = coalesce(var.management_subscription_id, data.azapi_client_config.current.subscription_id) })
     amba_alz_resource_group_location               = jsonencode({ value = local.amba_location })
-    amba_alz_resource_group_name                   = jsonencode({ value = var.amba_alz_resource_group_name })
+    amba_alz_resource_group_name                   = jsonencode({ value = var.amba_monitoring_resource_group_name })
     amba_alz_resource_group_tags                   = jsonencode({ value = var.tags })
     amba_alz_user_assigned_managed_identity_name   = jsonencode({ value = var.user_assigned_managed_identity_name })
-    amba_alz_byo_user_assigned_managed_identity_id = jsonencode({ value = module.amba_alz.user_assigned_managed_identity_id })
+    amba_alz_byo_user_assigned_managed_identity_id = jsonencode({ value = var.bring_your_own_user_assigned_managed_identity ? var.user_assigned_managed_identity_name : module.amba_alz[0].user_assigned_managed_identity_id })
     amba_alz_disable_tag_name                      = jsonencode({ value = var.amba_disable_tag_name })
     amba_alz_disable_tag_values                    = jsonencode({ value = var.amba_disable_tag_values })
     amba_alz_action_group_email                    = jsonencode({ value = var.action_group_email })
