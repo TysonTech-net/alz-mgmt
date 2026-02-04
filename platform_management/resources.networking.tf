@@ -11,7 +11,7 @@ resource "azurerm_resource_group" "network" {
 }
 
 module "spoke_network" {
-  source = "./modules/spoke_network"
+  source = "git@github.com:TysonTech-net/alz-modules.git//spoke_network?ref=main"
 
   providers = {
     azurerm              = azurerm
