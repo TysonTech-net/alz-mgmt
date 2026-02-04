@@ -32,5 +32,5 @@ jobs:
       contents: read
       pull-requests: write
     with:
-      root_module_folder_relative_path: ${{ inputs.terraform_folder == 'all' && '.' || inputs.terraform_folder }}
-      terraform_cli_version: ${{ inputs.terraform_cli_version }}
+      root_module_folder_relative_path: ${{ inputs.terraform_folder == 'all' && '.' || inputs.terraform_folder || '.' }}
+      terraform_cli_version: ${{ inputs.terraform_cli_version || 'latest' }}
