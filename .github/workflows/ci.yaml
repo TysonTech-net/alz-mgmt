@@ -7,11 +7,12 @@ on:
   workflow_dispatch:
     inputs:
       terraform_folder:
-        description: 'Terraform folder to validate'
+        description: 'Terraform folder to validate (or all)'
         required: true
-        default: 'platform_shared'
+        default: 'all'
         type: choice
         options:
+          - 'all'
           - 'platform_shared'
           - 'platform_amba'
           - 'platform_management'
@@ -24,12 +25,16 @@ on:
 
 jobs:
   validate_and_plan:
+    strategy:
+      fail-fast: false
+      matrix:
+        folder: ${{ inputs.terraform_folder == 'all' || inputs.terraform_folder == '' && fromJson('["platform_shared", "platform_amba"]') || fromJson(format('["{0}"]', inputs.terraform_folder)) }}
     uses: TysonTech-net/alz-mgmt-templates/.github/workflows/ci-template.yaml@main
-    name: 'CI'
+    name: 'CI - ${{ matrix.folder }}'
     permissions:
       id-token: write
       contents: read
       pull-requests: write
     with:
-      root_module_folder_relative_path: ${{ inputs.terraform_folder || 'platform_shared' }}
+      root_module_folder_relative_path: ${{ matrix.folder }}
       terraform_cli_version: ${{ inputs.terraform_cli_version || 'latest' }}
