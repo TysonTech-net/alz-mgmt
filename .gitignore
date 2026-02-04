@@ -9,11 +9,8 @@
 crash.log
 crash.*.log
 
-# Variable files (usually environment-specific / sensitive)
-terraform.tfvars
-*.tfvars
-*.tfvars.json
-*.auto.tfvars
+# Variable files - only ignore backend configs (contain storage account info)
+# Note: Other tfvars are committed for CI/CD
 
 # Plan and trace artifacts
 *.tfplan
