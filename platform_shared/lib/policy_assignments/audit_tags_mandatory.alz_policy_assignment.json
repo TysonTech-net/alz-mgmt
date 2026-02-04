@@ -1,0 +1,19 @@
+{
+  "name": "Audit-Tags-Mandatory",
+  "type": "Microsoft.Authorization/policyAssignments",
+  "apiVersion": "2024-04-01",
+  "properties": {
+    "description": "Enforces required tags on resources based on tag array. Does not apply to resource groups.",
+    "displayName": "Enforce mandatory tags on resources",
+    "notScopes": [],
+    "parameters": {
+      "effect": {
+        "value": "Deny"
+      }
+    },
+    "policyDefinitionId": "/providers/Microsoft.Management/managementGroups/${root_id}/providers/Microsoft.Authorization/policyDefinitions/Audit-Tags-Mandatory",
+    "scope": "${current_scope_resource_id}",
+    "enforcementMode": "Default"
+  },
+  "location": "${default_location}"
+}

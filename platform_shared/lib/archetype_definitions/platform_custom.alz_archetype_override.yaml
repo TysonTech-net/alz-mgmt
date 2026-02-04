@@ -1,6 +1,9 @@
 base_archetype: platform
 name: platform_custom
-policy_assignments_to_add: []
+policy_assignments_to_add: [
+  # Storage Security - from ALZ library
+  "Deny-Storage-http",
+]
 policy_assignments_to_remove: [
 # To disable AMA policies, uncomment the following lines:
   # DenyAction-DeleteUAMIAMA,
@@ -11,6 +14,7 @@ policy_assignments_to_remove: [
   # Deploy-vmHybr-Monitoring,
   # Deploy-VMSS-ChangeTrack,
   # Deploy-VMSS-Monitoring,
+  Enable-DDoS-VNET
 ]
 policy_definitions_to_add: []
 policy_definitions_to_remove: []

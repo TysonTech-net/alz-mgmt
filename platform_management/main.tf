@@ -39,7 +39,7 @@ locals {
         },
         coalesce(hub.tags, {})
       )
-      name_prefix    = "${var.naming.workload}-${var.naming.env}"
+      name_prefix = "${var.naming.workload}-${var.naming.env}"
     })
   }
 }

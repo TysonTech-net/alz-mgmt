@@ -23,12 +23,12 @@ terraform {
 
 provider "azapi" {
   skip_provider_registration = true
-  subscription_id            = try(var.subscription_ids["management"], data.azapi_client_config.current.subscription_id)
+  subscription_id            = try(var.subscription_ids["management"], null)
 }
 
 provider "azurerm" {
   alias           = "management"
-  subscription_id = try(var.subscription_ids["management"], data.azapi_client_config.current.subscription_id)
+  subscription_id = try(var.subscription_ids["management"], null)
   features {
     resource_group {
       prevent_deletion_if_contains_resources = false

@@ -50,3 +50,7 @@ tfplan.json
 resources.json
 issues.json
 issues.csv
+
+# Backend configuration files (contain subscription IDs and storage account names)
+backend.conf
+backend.tfvars

@@ -66,19 +66,20 @@ variable "management_subscription_id" {
 
 variable "action_group_email" {
   description = "Email for AMBA action group notifications."
-  type        = string
+  type        = list(string)
+  default     = []
 }
 
 variable "action_group_arm_role_id" {
   description = "ARM role ID for AMBA action group (optional)."
-  type        = string
-  default     = ""
+  type        = list(string)
+  default     = []
 }
 
 variable "alert_severity" {
-  description = "Default alert severity for AMBA Deploy-AMBA-Notification assignment (e.g., Sev3)."
-  type        = string
-  default     = "Sev3"
+  description = "Severity levels for alerts notifications to be sent."
+  type        = list(string)
+  default     = ["Sev0", "Sev1", "Sev2", "Sev3", "Sev4"]
 }
 
 variable "root_parent_management_group_name" {
@@ -100,14 +101,14 @@ variable "amba_disable_tag_values" {
 
 variable "webhook_service_uri" {
   description = "Webhook URI for AMBA action group (optional)."
-  type        = string
-  default     = ""
+  type        = list(string)
+  default     = []
 }
 
 variable "event_hub_resource_id" {
   description = "Event Hub resource ID for AMBA (optional)."
-  type        = string
-  default     = ""
+  type        = list(string)
+  default     = []
 }
 
 variable "function_resource_id" {
@@ -142,8 +143,8 @@ variable "bring_your_own_alert_processing_rule_resource_id" {
 
 variable "bring_your_own_action_group_resource_id" {
   description = "BYO action group resource ID (optional)."
-  type        = string
-  default     = ""
+  type        = list(string)
+  default     = []
 }
 
 variable "tags" {

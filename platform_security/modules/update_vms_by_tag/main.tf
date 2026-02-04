@@ -149,7 +149,7 @@ resource "azurerm_policy_set_definition" "this" {
           value = [
             {
               # Shared tag key parameter for all policies
-              key   = "[parameters('patchGroupTagKey')]"
+              key = "[parameters('patchGroupTagKey')]"
               # Per-MC tag value parameter
               value = "[parameters('${policy_definition_reference.value.tag_param_name}')]"
             }

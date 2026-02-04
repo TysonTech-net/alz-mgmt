@@ -6,6 +6,17 @@ on:
       - main
   workflow_dispatch:
     inputs:
+      terraform_folder:
+        description: 'Terraform folder to validate'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - 'all'
+          - 'platform_amba'
+          - 'platform_management'
+          - 'platform_security'
+          - 'platform_shared'
       terraform_cli_version:
         description: 'Terraform CLI Version'
         required: true
@@ -21,5 +32,5 @@ jobs:
       contents: read
       pull-requests: write
     with:
-      root_module_folder_relative_path: '.'
+      root_module_folder_relative_path: ${{ inputs.terraform_folder == 'all' && '.' || inputs.terraform_folder }}
       terraform_cli_version: ${{ inputs.terraform_cli_version }}
