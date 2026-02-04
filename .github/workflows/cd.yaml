@@ -9,14 +9,13 @@ on:
       terraform_folder:
         description: 'Terraform folder to deploy'
         required: true
-        default: 'all'
+        default: 'platform_shared'
         type: choice
         options:
-          - 'all'
+          - 'platform_shared'
           - 'platform_amba'
           - 'platform_management'
           - 'platform_security'
-          - 'platform_shared'
       terraform_action:
         description: 'Terraform Action to perform'
         required: true
@@ -40,5 +39,5 @@ jobs:
       contents: read
     with:
       terraform_action: ${{ inputs.terraform_action || 'apply' }}
-      root_module_folder_relative_path: ${{ inputs.terraform_folder == 'all' && '.' || inputs.terraform_folder || '.' }}
+      root_module_folder_relative_path: ${{ inputs.terraform_folder || 'platform_shared' }}
       terraform_cli_version: ${{ inputs.terraform_cli_version || 'latest' }}

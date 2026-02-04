@@ -9,14 +9,13 @@ on:
       terraform_folder:
         description: 'Terraform folder to validate'
         required: true
-        default: 'all'
+        default: 'platform_shared'
         type: choice
         options:
-          - 'all'
+          - 'platform_shared'
           - 'platform_amba'
           - 'platform_management'
           - 'platform_security'
-          - 'platform_shared'
       terraform_cli_version:
         description: 'Terraform CLI Version'
         required: true
@@ -32,5 +31,5 @@ jobs:
       contents: read
       pull-requests: write
     with:
-      root_module_folder_relative_path: ${{ inputs.terraform_folder == 'all' && '.' || inputs.terraform_folder || '.' }}
+      root_module_folder_relative_path: ${{ inputs.terraform_folder || 'platform_shared' }}
       terraform_cli_version: ${{ inputs.terraform_cli_version || 'latest' }}
