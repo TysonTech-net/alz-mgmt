@@ -6,6 +6,13 @@ locals {
       none               = "none"
     }
   }
+
+  # Derive mandatory tags: prefer var.mandatory_tags if set, otherwise keys(var.tags), otherwise default list
+  mandatory_tags = (
+    var.mandatory_tags != null ? var.mandatory_tags :
+    var.tags != null ? keys(var.tags) :
+    ["Environment", "Owner", "CostCenter"]
+  )
 }
 
 locals {
@@ -46,6 +53,12 @@ locals {
     module.config.outputs.management_group_settings,
     {
       dependencies = local.management_group_dependencies
+      policy_default_values = merge(
+        module.config.outputs.management_group_settings.policy_default_values,
+        {
+          mandatory_tags = local.mandatory_tags
+        }
+      )
     }
   )
   management_resource_settings = merge(

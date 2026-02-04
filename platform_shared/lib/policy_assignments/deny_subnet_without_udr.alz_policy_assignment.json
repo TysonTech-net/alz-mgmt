@@ -1,0 +1,27 @@
+{
+  "name": "Deny-Subnet-No-Udr",
+  "type": "Microsoft.Authorization/policyAssignments",
+  "apiVersion": "2024-04-01",
+  "properties": {
+    "description": "This policy denies the creation of a subnet without a User Defined Route (UDR).",
+    "displayName": "Subnets should have a User Defined Route",
+    "notScopes": [],
+    "parameters": {
+      "effect": {
+        "value": "Deny"
+      },
+      "excludedSubnets": {
+        "value": [
+          "AzureBastionSubnet",
+          "AzureFirewallSubnet",
+          "AzureFirewallManagementSubnet",
+          "GatewaySubnet"
+        ]
+      }
+    },
+    "policyDefinitionId": "/providers/Microsoft.Management/managementGroups/${root_id}/providers/Microsoft.Authorization/policyDefinitions/Deny-Subnet-Without-Udr",
+    "scope": "${current_scope_resource_id}",
+    "enforcementMode": "Default"
+  },
+  "location": "${default_location}"
+}

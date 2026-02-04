@@ -13,7 +13,10 @@
     },
     "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/ea3f2387-9b95-492a-a190-fcdc54f7b070",
     "scope": "${current_scope_resource_id}",
-    "enforcementMode": null
+    "enforcementMode": "Default",
+    "roleDefinitionIds": [
+      "/providers/microsoft.authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c"
+    ]
   },
   "location": "${default_location}",
   "identity": {

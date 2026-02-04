@@ -2,18 +2,31 @@ base_archetype: root
 name: root_custom
 policy_assignments_to_add: [
     # 'Win-VM-Eventlogs-DCR',
-    "Audit-VM-Backups",
     "UK-Official-and-UK-NHS",
     "CIS-Msft-Benchmark-v2",
-    "Deploy-Diag-LogsCat",
-    "Enforce-VM-Backup-RSV",
-    "Enable-Azure-Monitor-VM",
+    "Deploy-Diag-LogsAll",          # allLogs category (comprehensive) - custom override using built-in initiative 0884adba-2312-4468-abeb-5422caed1038
+    "Deploy-VM-Monitoring",
     "Append-Tag-From-RG",
+    # Tagging Policies
+    "Enforce-VM-Tag-Values",          # Requires Environment tag with specific values on VMs
+    "Audit-Tags-Mandatory",           # Enforces required tags (configurable via mandatory_tags local)
     # 'Deploy-Lock-Resource-Groups',
+    # Backup & Activity Log (Auto-Remediation) - from ALZ library
+    "Deploy-VM-Backup",
+    "Deploy-AzActivity-Log",
+    # Security (Deny Policies) - from ALZ library
+    "Deny-IP-forwarding",
+    "Deny-MgmtPorts-Internet",
+    "Deny-Subnet-Without-Nsg",
+    "Deny-Subnet-No-Udr",             # Requires UDR on all subnets (excludes special subnets)
   ]
 policy_assignments_to_remove: []
 policy_definitions_to_add:
-  ["Enforce-Resource-Tag", "Enforce-VM-Tag-and-Values", "ActivityLog-To-EH"]
+  [
+    "Enforce-VM-Tag-and-Values",
+    "Audit-Tags-Mandatory",
+    "Deny-Subnet-Without-Udr",
+  ]
 policy_definitions_to_remove: []
 policy_set_definitions_to_add: []
 policy_set_definitions_to_remove: []
