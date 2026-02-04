@@ -48,6 +48,5 @@ resources.json
 issues.json
 issues.csv
 
-# Backend configuration files (contain subscription IDs and storage account names)
-backend.conf
+# Backend tfvars (may contain sensitive overrides)
 backend.tfvars
