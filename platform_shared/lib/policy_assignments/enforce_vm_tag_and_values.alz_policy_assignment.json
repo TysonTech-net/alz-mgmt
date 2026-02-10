@@ -1,0 +1,25 @@
+{
+  "name": "Enforce-VM-Tag-Values",
+  "type": "Microsoft.Authorization/policyAssignments",
+  "apiVersion": "2024-04-01",
+  "properties": {
+    "description": "Enforces a required tag and optionally its values on virtual machines.",
+    "displayName": "Require tag on virtual machines",
+    "notScopes": [],
+    "parameters": {
+      "tagName": {
+        "value": "Environment"
+      },
+      "tagValues": {
+        "value": ["Production", "Staging", "Development", "Test"]
+      },
+      "effect": {
+        "value": "Deny"
+      }
+    },
+    "policyDefinitionId": "/providers/Microsoft.Management/managementGroups/${root_id}/providers/Microsoft.Authorization/policyDefinitions/Enforce-VM-Tag-and-Values",
+    "scope": "${current_scope_resource_id}",
+    "enforcementMode": "Default"
+  },
+  "location": "${default_location}"
+}

@@ -1,102 +1,95 @@
+variable "subscription_ids" {
+  description = "Subscription IDs used by this stack."
+  type        = map(string)
+  nullable    = false
+}
+
 variable "starter_locations" {
+  description = "Regions to deploy hubs into (order defines primary/secondary, etc.)."
   type        = list(string)
-  description = "The default for Azure resources. (e.g 'uksouth')"
-  validation {
-    condition     = length(var.starter_locations) > 0
-    error_message = "You must provide at least one starter location region."
-  }
+  nullable    = false
 }
 
 variable "starter_locations_short" {
+  description = "Optional map of region to short code (overrides auto-derived)."
   type        = map(string)
   default     = {}
-  description = <<DESCRIPTION
-Optional overrides for the starter location short codes.
-
-Keys should match the built-in replacement names used in the examples, for example:
-- starter_location_01_short
-- starter_location_02_short
-
-If not provided, short codes are derived from the regions module using geo_code when available, falling back to short_name when no geo_code is published.
-DESCRIPTION
 }
 
-variable "subscription_ids" {
-  description = "The list of subscription IDs to deploy the Platform Landing Zones into"
-  type        = map(string)
-  default     = {}
-  nullable    = false
-  validation {
-    condition     = length(var.subscription_ids) == 0 || alltrue([for id in values(var.subscription_ids) : can(regex("^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})$", id))])
-    error_message = "All subscription IDs must be valid GUIDs"
-  }
-  validation {
-    condition     = length(var.subscription_ids) == 0 || alltrue([for id in keys(var.subscription_ids) : contains(["management", "connectivity", "identity", "security"], id)])
-    error_message = "The keys of the subscription_ids map must be one of 'management', 'connectivity', 'identity' or 'security'"
-  }
-}
-
-variable "subscription_id_connectivity" {
-  description = "DEPRECATED (use subscription_ids instead): The identifier of the Connectivity Subscription"
-  type        = string
-  default     = null
-  validation {
-    condition     = var.subscription_id_connectivity == null || can(regex("^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})$", var.subscription_id_connectivity))
-    error_message = "The subscription ID must be a valid GUID"
-  }
-}
-
-variable "subscription_id_identity" {
-  description = "DEPRECATED (use subscription_ids instead): The identifier of the Identity Subscription"
-  type        = string
-  default     = null
-  validation {
-    condition     = var.subscription_id_identity == null || can(regex("^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})$", var.subscription_id_identity))
-    error_message = "The subscription ID must be a valid GUID"
-  }
-}
-
-variable "subscription_id_management" {
-  description = "DEPRECATED (use subscription_ids instead): The identifier of the Management Subscription"
-  type        = string
-  default     = null
-  validation {
-    condition     = var.subscription_id_management == null || can(regex("^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})$", var.subscription_id_management))
-    error_message = "The subscription ID must be a valid GUID"
-  }
-}
-
-variable "root_parent_management_group_id" {
-  type        = string
-  default     = ""
-  description = "This is the id of the management group that the ALZ hierarchy will be nested under, will default to the Tenant Root Group"
-}
-
-variable "enable_telemetry" {
-  type        = bool
-  default     = true
-  description = "Flag to enable/disable telemetry"
-}
-
-variable "custom_replacements" {
+variable "naming" {
+  description = "Base naming tokens."
   type = object({
-    names                      = optional(map(string), {})
-    resource_group_identifiers = optional(map(string), {})
-    resource_identifiers       = optional(map(string), {})
+    env      = string
+    workload = string
+    instance = string
   })
-  default = {
-    names                      = {}
-    resource_group_identifiers = {}
-    resource_identifiers       = {}
-  }
-  description = "Custom replacements"
+}
+
+variable "hubs" {
+  description = "Per-region hub/spoke settings (hubvnet mode only). Key is logical hub name."
+  type = map(object({
+    location                = string
+    location_short          = optional(string)
+    resource_group_name     = string
+    hub_vnet_id             = string
+    hub_resource_group_name = string
+    virtual_network_settings = object({
+      name                    = string
+      address_space           = list(string)
+      dns_servers             = optional(list(string), [])
+      flow_timeout_in_minutes = optional(number)
+      ddos_protection_plan_id = optional(string)
+      enable_ddos_protection  = optional(bool, false)
+      peer_to_hub             = optional(bool, true)
+      peer_to_hub_settings    = optional(any, {})
+    })
+    subnets                 = map(any)
+    network_security_groups = map(any)
+    route_tables            = map(any)
+    common_routes           = list(any)
+    tags                    = optional(map(string), {})
+  }))
+  default = {}
+}
+
+variable "vms" {
+  description = "Virtual machines to deploy (keyed by name)."
+  type = map(object({
+    name                = string
+    hub_key             = string
+    resource_group_name = string
+    subnet_key          = string
+    private_ip_address  = string
+    sku_size            = string
+    zone                = optional(number, 1)
+    license_type        = optional(string, "Windows_Server")
+    image = object({
+      publisher = string
+      offer     = string
+      sku       = string
+      version   = optional(string, "latest")
+    })
+    os_disk = object({
+      disk_size_gb         = number
+      storage_account_type = optional(string, "Premium_LRS")
+      caching              = optional(string, "ReadWrite")
+    })
+    admin_username = optional(string, "azureadmin")
+    extensions     = optional(map(any), {})
+    tags           = optional(map(string), {})
+  }))
+  default = {}
+}
+
+variable "vm_admin_password" {
+  description = "Admin password for VMs."
+  type        = string
+  sensitive   = true
+  default     = ""
 }
 
 variable "tags" {
+  description = "Base tags applied to all resources."
   type        = map(string)
-  default     = null
-  description = "(Optional) Tags of the resource."
+  default     = {}
 }
-
-
-

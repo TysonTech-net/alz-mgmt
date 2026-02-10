@@ -52,3 +52,21 @@ management_groups:
     archetypes: [landing_zones_custom]
     exists: false
     parent_id: visplatform-application-landing-zones
+
+  - id: audiocodes-production
+    display_name: AudioCodes-Production
+    archetypes: [landing_zones_custom]
+    exists: false
+    parent_id: audiocodes
+
+  - id: audiocodes-nle
+    display_name: AudioCodes-NLE
+    archetypes: [landing_zones_custom]
+    exists: false
+    parent_id: audiocodes
+
+  - id: audiocodes-sbc
+    display_name: AudioCodes-SBC
+    archetypes: [landing_zones_custom]
+    exists: false
+    parent_id: audiocodes

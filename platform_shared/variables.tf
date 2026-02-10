@@ -101,3 +101,13 @@ variable "tags" {
   default     = null
   description = "(Optional) Tags of the resource."
 }
+
+variable "mandatory_tags" {
+  type        = list(string)
+  default     = null
+  description = <<DESCRIPTION
+List of mandatory tags that must be present on all resources. Used by the Audit-Tags-Mandatory policy.
+If not set, will be derived from keys(var.tags) in locals.tf.
+If var.tags is also not set, falls back to ["Environment", "Owner", "CostCenter"].
+DESCRIPTION
+}

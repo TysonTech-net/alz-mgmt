@@ -1,0 +1,55 @@
+{
+  "$schema": "https://raw.githubusercontent.com/Azure/Azure-Landing-Zones-Library/main/schemas/architecture_definition.json",
+  "name": "custom",
+  "management_groups": [
+    {
+      "archetypes": ["amba_root"],
+      "display_name": "VISPlatform",
+      "exists": true,
+      "id": "VISPlatform",
+      "parent_id": null
+    },
+    {
+      "archetypes": ["amba_platform"],
+      "display_name": "VISPlatform-Platform",
+      "exists": true,
+      "id": "visplatform-platform",
+      "parent_id": "VISPlatform"
+    },
+    {
+      "archetypes": ["amba_management"],
+      "display_name": "VISPlatform-Management",
+      "exists": true,
+      "id": "visplatform-management",
+      "parent_id": "visplatform-platform"
+    },
+    {
+      "archetypes": ["amba_connectivity"],
+      "display_name": "VISPlatform-Connectivity",
+      "exists": true,
+      "id": "visplatform-connectivity",
+      "parent_id": "visplatform-platform"
+    },
+    {
+      "archetypes": ["amba_identity"],
+      "display_name": "VISPlatform-Identity",
+      "exists": true,
+      "id": "visplatform-identity",
+      "parent_id": "visplatform-platform"
+    },
+    {
+      "archetypes": ["amba_landing_zones"],
+      "display_name": "VISPlatform-Application-Landing-Zones",
+      "exists": true,
+      "id": "visplatform-application-landing-zones",
+      "parent_id": "VISPlatform"
+    },
+    {
+      "archetypes": ["amba_landing_zones"],
+      "display_name": "AudioCodes",
+      "exists": true,
+      "id": "audiocodes",
+      "parent_id": "visplatform-application-landing-zones"
+    }
+  ]
+}

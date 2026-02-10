@@ -6,6 +6,16 @@ on:
       - main
   workflow_dispatch:
     inputs:
+      terraform_folder:
+        description: 'Terraform folder to deploy'
+        required: true
+        default: 'platform_shared'
+        type: choice
+        options:
+          - 'platform_shared'
+          - 'platform_amba'
+          - 'platform_management'
+          - 'platform_security'
       terraform_action:
         description: 'Terraform Action to perform'
         required: true
@@ -28,6 +38,6 @@ jobs:
       id-token: write
       contents: read
     with:
-      terraform_action: ${{ inputs.terraform_action }}
-      root_module_folder_relative_path: '.'
-      terraform_cli_version: ${{ inputs.terraform_cli_version }}
+      terraform_action: ${{ inputs.terraform_action || 'apply' }}
+      root_module_folder_relative_path: ${{ inputs.terraform_folder || 'platform_shared' }}
+      terraform_cli_version: ${{ inputs.terraform_cli_version || 'latest' }}
