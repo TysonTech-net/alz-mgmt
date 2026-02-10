@@ -1,95 +1,172 @@
-###############################################
-# Platform Identity Subscription Configuration
-###############################################
+###############################################################################
+# Subscription
+###############################################################################
 
-subscription_ids = {
-  identity     = "ae1373b1-92fd-4659-9c71-c5695fea28c8"
-  connectivity = "91f98b99-3946-4096-8191-1078a530c5fd"
+subscription = "ae1373b1-92fd-4659-9c71-c5695fea28c8"
+
+###############################################################################
+# Connectivity Configuration
+###############################################################################
+
+connectivity_type = "hub_and_spoke"
+
+platform_shared_state = {
+  resource_group_name  = "rg-alz-mgmt-state-uksouth-001"
+  storage_account_name = "stoalzmgmuks001ybcn"
+  container_name       = "mgmt-tfstate"
+  key                  = "terraform.tfstate"
+  subscription_id      = "f09a5d16-c8db-4d7c-bce4-a2781c659cde"
 }
 
-primary_location       = "uksouth"
-primary_location_short = "uks"
-customer_prefix        = ""
-
-naming = {
-  env      = "prod"
-  workload = "identity"
-  instance = "001"
-}
+###############################################################################
+# Tags
+###############################################################################
 
 tags = {
-  owner       = "platform-team"
-  cost_centre = "IT"
+  deployed_by = "terraform"
+  Environment = "production"
+  Owner       = "platform-team"
+  CostCenter  = "IT-Infrastructure"
 }
 
-###############################################
-# Network Configuration
-###############################################
+###############################################################################
+# Vending - Subscription Resources (VNets, Resource Groups, etc.)
+###############################################################################
 
-virtual_network = {
-  address_space = ["10.100.0.0/24"]
-  dns_servers   = [] # Populated from platform_shared outputs
-}
+vending = {
+  # Primary region - full deployment
+  uksouth = {
+    location = "uksouth"
 
-subnets = {
-  identity = {
-    address_prefixes           = ["10.100.0.0/26"]
-    network_security_group_key = "identity"
-    route_table_key            = "default"
-  }
-}
-
-network_security_groups = {
-  identity = {
-    security_rules = [
-      {
-        name                       = "AllowRDP"
-        priority                   = 100
-        direction                  = "Inbound"
-        access                     = "Allow"
-        protocol                   = "Tcp"
-        source_port_range          = "*"
-        destination_port_range     = "3389"
-        source_address_prefix      = "VirtualNetwork"
-        destination_address_prefix = "*"
+    # Resource Groups
+    resource_group_creation_enabled = true
+    resource_groups = {
+      network = {
+        name = "rg-identity-prod-network-uks-001"
       }
-    ]
+      management = {
+        name = "rg-identity-prod-mgmt-uks-001"
+      }
+    }
+
+    # Virtual Networks - will auto-peer to hub from platform_shared
+    virtual_network_enabled = true
+    virtual_networks = {
+      identity = {
+        name                     = "vnet-identity-prod-uks-001"
+        address_space            = ["10.0.4.0/24"]
+        resource_group_key       = "network"
+        hub_peering_enabled      = true
+        hub_peering_direction    = "both"
+        hub_peering_name_tohub   = "peer-identity-to-hub-uks"
+        hub_peering_name_fromhub = "peer-hub-to-identity-uks"
+        subnets = {
+          domain_controllers = {
+            name             = "snet-dc-uks-001"
+            address_prefixes = ["10.0.4.0/27"]
+          }
+          identity_services = {
+            name             = "snet-identity-uks-001"
+            address_prefixes = ["10.0.4.32/27"]
+          }
+        }
+      }
+    }
+  }
+
+  # Secondary region - DR only (minimal config)
+  ukwest = {
+    location = "ukwest"
+
+    # Resource Groups
+    resource_group_creation_enabled = true
+    resource_groups = {
+      network = {
+        name = "rg-identity-prod-network-ukw-001"
+      }
+      management = {
+        name = "rg-identity-prod-mgmt-ukw-001"
+      }
+    }
+
+    # Virtual Networks - will auto-peer to hub from platform_shared
+    virtual_network_enabled = true
+    virtual_networks = {
+      identity = {
+        name                     = "vnet-identity-prod-ukw-001"
+        address_space            = ["10.1.4.0/24"]
+        resource_group_key       = "network"
+        hub_peering_enabled      = true
+        hub_peering_direction    = "both"
+        hub_peering_name_tohub   = "peer-identity-to-hub-ukw"
+        hub_peering_name_fromhub = "peer-hub-to-identity-ukw"
+        subnets = {
+          domain_controllers = {
+            name             = "snet-dc-ukw-001"
+            address_prefixes = ["10.1.4.0/27"]
+          }
+          identity_services = {
+            name             = "snet-identity-ukw-001"
+            address_prefixes = ["10.1.4.32/27"]
+          }
+        }
+      }
+    }
   }
 }
 
-route_tables = {
-  default = {
-    bgp_route_propagation_enabled = false
+###############################################################################
+# Management - Workload Management Resources (RSV, Key Vault, etc.)
+###############################################################################
+
+management = {
+  # Primary region - full deployment with backup and key vault
+  uksouth = {
+    location                       = "uksouth"
+    management_resource_group_name = "rg-identity-prod-mgmt-uks-001"
+
+    # Backup Recovery Services Vault
+    deploy_management_backup_recovery_services_vault   = true
+    management_backup_rsv_name                         = "rsv-identity-prod-uks-001"
+    management_backup_rsv_storage_mode_type            = "GeoRedundant"
+    management_backup_rsv_cross_region_restore_enabled = true
+    management_backup_rsv_soft_delete_enabled          = true
+
+    # Site Recovery - for DR replication to ukwest
+    deploy_management_site_recovery_recovery_services_vault = true
+    management_site_recovery_rsv_name                       = "rsv-asr-identity-prod-uks-001"
+    management_site_recovery_rsv_storage_mode_type          = "GeoRedundant"
+
+    # Key Vault (name must be globally unique, 3-24 chars, alphanumeric only)
+    deploy_management_key_vault        = true
+    management_kv_name                 = "kvidentityuks001x7b2"
+    management_kv_tenant_id            = "b83e0c30-64d5-4a55-9981-cc4f28dd2078"
+    management_kv_sku_name             = "premium"
+    management_kv_purge_protection_enabled = true
+  }
+
+  # Secondary region - DR target (receives replicated VMs, minimal local resources)
+  ukwest = {
+    location                       = "ukwest"
+    management_resource_group_name = "rg-identity-prod-mgmt-ukw-001"
+
+    # Backup RSV - for local backups in DR region
+    deploy_management_backup_recovery_services_vault   = true
+    management_backup_rsv_name                         = "rsv-identity-prod-ukw-001"
+    management_backup_rsv_storage_mode_type            = "LocallyRedundant"
+    management_backup_rsv_cross_region_restore_enabled = false
+    management_backup_rsv_soft_delete_enabled          = true
+
+    # Site Recovery - target vault for failover
+    deploy_management_site_recovery_recovery_services_vault = true
+    management_site_recovery_rsv_name                       = "rsv-asr-identity-prod-ukw-001"
+    management_site_recovery_rsv_storage_mode_type          = "LocallyRedundant"
+
+    # Key Vault (name must be globally unique, 3-24 chars, alphanumeric only)
+    deploy_management_key_vault        = true
+    management_kv_name                 = "kvidentityukw001x7b2"
+    management_kv_tenant_id            = "b83e0c30-64d5-4a55-9981-cc4f28dd2078"
+    management_kv_sku_name             = "premium"
+    management_kv_purge_protection_enabled = true
   }
 }
-
-common_routes = [
-  {
-    name                   = "to-firewall"
-    address_prefix         = "0.0.0.0/0"
-    next_hop_type          = "VirtualAppliance"
-    next_hop_in_ip_address = "10.0.0.4" # Update with actual firewall IP
-  }
-]
-
-###############################################
-# Hub Connectivity (vWAN)
-###############################################
-
-# virtual_hub_id = "/subscriptions/.../resourceGroups/.../providers/Microsoft.Network/virtualHubs/vhub-..." # From platform_shared outputs
-
-###############################################
-# Private DNS (from platform_shared outputs)
-###############################################
-
-# private_dns_zone_ids = {}
-# dns_forwarding_ruleset_id = null
-
-###############################################
-# Management Toggles
-###############################################
-
-create_management_rg           = true
-create_log_analytics_workspace = true
-create_management_kv           = true
-create_backup_rsv              = true

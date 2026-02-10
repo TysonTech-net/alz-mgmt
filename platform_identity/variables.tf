@@ -1,145 +1,64 @@
-###############################################
-# Subscription IDs
-###############################################
-
-variable "subscription_ids" {
-  description = "Subscription IDs used by this stack."
-  type        = map(string)
-  nullable    = false
-}
-
-###############################################
-# Location
-###############################################
-
-variable "primary_location" {
-  description = "Primary Azure region for deployment."
+variable "subscription" {
   type        = string
+  description = "The existing subscription ID to use."
 }
-
-variable "primary_location_short" {
-  description = "Short code for primary location (e.g., uks)."
-  type        = string
-  default     = ""
-}
-
-###############################################
-# Naming
-###############################################
-
-variable "customer_prefix" {
-  description = "Optional customer prefix for resource naming."
-  type        = string
-  default     = ""
-}
-
-variable "naming" {
-  description = "Base naming tokens."
-  type = object({
-    env      = string
-    workload = string
-    instance = string
-  })
-}
-
-###############################################
-# Tags
-###############################################
 
 variable "tags" {
-  description = "Base tags applied to all resources."
   type        = map(string)
   default     = {}
+  description = "Tags to apply across all resources."
 }
 
-###############################################
-# Network Configuration
-###############################################
+variable "enable_telemetry" {
+  type        = bool
+  default     = true
+  description = "Toggle to enable or disable telemetry for the deployed resources."
+}
 
-variable "virtual_network" {
-  description = "Virtual network configuration."
+###############################################################################
+# Connectivity Configuration
+###############################################################################
+
+variable "connectivity_type" {
+  type        = string
+  description = "The type of connectivity architecture used in platform_shared. Determines which hub resources to reference."
+  validation {
+    condition     = contains(["hub_and_spoke", "virtual_wan", "none"], var.connectivity_type)
+    error_message = "connectivity_type must be one of: hub_and_spoke, virtual_wan, none"
+  }
+}
+
+###############################################################################
+# Remote State Configuration - Platform Shared
+###############################################################################
+
+variable "platform_shared_state" {
   type = object({
-    name                    = optional(string)
-    address_space           = list(string)
-    dns_servers             = optional(list(string), [])
-    ddos_protection_plan_id = optional(string)
+    resource_group_name  = string
+    storage_account_name = string
+    container_name       = string
+    key                  = string
+    subscription_id      = string
   })
+  description = <<DESCRIPTION
+Configuration for accessing the platform_shared Terraform remote state.
+
+Properties:
+- `resource_group_name` - The name of the resource group containing the storage account
+- `storage_account_name` - The name of the storage account containing the state file
+- `container_name` - The name of the blob container containing the state file
+- `key` - The key (path) of the state file within the container
+- `subscription_id` - The subscription ID where the storage account resides
+
+Example:
+```hcl
+platform_shared_state = {
+  resource_group_name  = "rg-alz-mgmt-state-uksouth-001"
+  storage_account_name = "stoalzmgmtuks001"
+  container_name       = "mgmt-tfstate"
+  key                  = "terraform.tfstate"
+  subscription_id      = "00000000-0000-0000-0000-000000000000"
 }
-
-variable "subnets" {
-  description = "Map of subnets to create."
-  type        = map(any)
-  default     = {}
-}
-
-variable "network_security_groups" {
-  description = "Map of NSGs to create."
-  type        = map(any)
-  default     = {}
-}
-
-variable "route_tables" {
-  description = "Map of route tables to create."
-  type        = map(any)
-  default     = {}
-}
-
-variable "common_routes" {
-  description = "Routes added to all route tables."
-  type        = list(any)
-  default     = []
-}
-
-###############################################
-# Hub Connectivity (vWAN)
-###############################################
-
-variable "virtual_hub_id" {
-  description = "Virtual Hub ID for vWAN connectivity."
-  type        = string
-  default     = null
-}
-
-###############################################
-# Private DNS
-###############################################
-
-variable "private_dns_zone_ids" {
-  description = "Map of Private DNS zone IDs to link."
-  type        = map(string)
-  default     = {}
-}
-
-variable "dns_forwarding_ruleset_id" {
-  description = "DNS forwarding ruleset ID."
-  type        = string
-  default     = null
-}
-
-###############################################
-# Management Toggles
-###############################################
-
-variable "create_management_rg" {
-  description = "Whether to create the management resource group."
-  type        = bool
-  default     = true
-}
-
-variable "create_log_analytics_workspace" {
-  description = "Whether to create a Log Analytics Workspace."
-  type        = bool
-  default     = true
-}
-
-variable "create_management_kv" {
-  description = "Whether to create a management Key Vault."
-  type        = bool
-  default     = true
-}
-
-variable "create_backup_rsv" {
-  description = "Whether to create a backup Recovery Services Vault."
-  type        = bool
-  default     = true
+```
+DESCRIPTION
 }
