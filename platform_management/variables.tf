@@ -1,95 +1,157 @@
-variable "subscription_ids" {
-  description = "Subscription IDs used by this stack."
-  type        = map(string)
-  nullable    = false
-}
-
-variable "starter_locations" {
-  description = "Regions to deploy hubs into (order defines primary/secondary, etc.)."
-  type        = list(string)
-  nullable    = false
-}
-
-variable "starter_locations_short" {
-  description = "Optional map of region to short code (overrides auto-derived)."
-  type        = map(string)
-  default     = {}
+variable "subscription" {
+  type        = string
+  description = "The existing subscription ID to use."
 }
 
 variable "naming" {
-  description = "Base naming tokens."
   type = object({
     env      = string
     workload = string
-    instance = string
+    instance = optional(string, "001")
   })
-}
+  description = <<DESCRIPTION
+Naming convention variables used to auto-generate resource names.
 
-variable "hubs" {
-  description = "Per-region hub/spoke settings (hubvnet mode only). Key is logical hub name."
-  type = map(object({
-    location                = string
-    location_short          = optional(string)
-    resource_group_name     = string
-    hub_vnet_id             = string
-    hub_resource_group_name = string
-    virtual_network_settings = object({
-      name                    = string
-      address_space           = list(string)
-      dns_servers             = optional(list(string), [])
-      flow_timeout_in_minutes = optional(number)
-      ddos_protection_plan_id = optional(string)
-      enable_ddos_protection  = optional(bool, false)
-      peer_to_hub             = optional(bool, true)
-      peer_to_hub_settings    = optional(any, {})
-    })
-    subnets                 = map(any)
-    network_security_groups = map(any)
-    route_tables            = map(any)
-    common_routes           = list(any)
-    tags                    = optional(map(string), {})
-  }))
-  default = {}
-}
+Properties:
+- `env` - Environment identifier (e.g., "prod", "dev", "test")
+- `workload` - Workload identifier (e.g., "identity", "connectivity", "management")
+- `instance` - Instance number, defaults to "001"
 
-variable "vms" {
-  description = "Virtual machines to deploy (keyed by name)."
-  type = map(object({
-    name                = string
-    hub_key             = string
-    resource_group_name = string
-    subnet_key          = string
-    private_ip_address  = string
-    sku_size            = string
-    zone                = optional(number, 1)
-    license_type        = optional(string, "Windows_Server")
-    image = object({
-      publisher = string
-      offer     = string
-      sku       = string
-      version   = optional(string, "latest")
-    })
-    os_disk = object({
-      disk_size_gb         = number
-      storage_account_type = optional(string, "Premium_LRS")
-      caching              = optional(string, "ReadWrite")
-    })
-    admin_username = optional(string, "azureadmin")
-    extensions     = optional(map(any), {})
-    tags           = optional(map(string), {})
-  }))
-  default = {}
-}
+All resource names are auto-generated using this pattern unless explicitly overridden.
+Example patterns:
+- Resource Groups: rg-{workload}-{env}-{purpose}-{region_abbr}-{instance}
+- Virtual Networks: vnet-{workload}-{env}-{region_abbr}-{instance}
+- Subnets: snet-{purpose}-{region_abbr}-{instance}
+- Route Tables: rt-{workload}-{env}-{region_abbr}-{instance}
+- NSGs: nsg-{subnet_name}
+- UMIs: id-{workload}-{env}-{region_abbr}-{instance}
+- RSVs: rsv-{workload}-{env}-{region_abbr}-{instance}
+- Key Vaults: kv{workload}{region_abbr}{instance}{random_suffix}
 
-variable "vm_admin_password" {
-  description = "Admin password for VMs."
-  type        = string
-  sensitive   = true
-  default     = ""
+Example:
+```hcl
+naming = {
+  env      = "prod"
+  workload = "identity"
+  instance = "001"
+}
+```
+DESCRIPTION
 }
 
 variable "tags" {
-  description = "Base tags applied to all resources."
   type        = map(string)
   default     = {}
+  description = "Tags to apply across all resources."
+}
+
+variable "enable_telemetry" {
+  type        = bool
+  default     = true
+  description = "Toggle to enable or disable telemetry for the deployed resources."
+}
+
+###############################################################################
+# Connectivity Configuration
+###############################################################################
+
+variable "connectivity_type" {
+  type        = string
+  description = "The type of connectivity architecture used in platform_shared. Determines which hub resources to reference."
+  validation {
+    condition     = contains(["hub_and_spoke", "virtual_wan", "none"], var.connectivity_type)
+    error_message = "connectivity_type must be one of: hub_and_spoke, virtual_wan, none"
+  }
+}
+
+variable "hub_region_mapping" {
+  type        = map(string)
+  default     = {}
+  description = <<DESCRIPTION
+Maps platform_shared hub keys (e.g., "primary", "secondary") to region names (e.g., "uksouth", "ukwest").
+This enables the workload stack to correctly associate hub resources (VNets, Firewalls, etc.) with regions.
+
+Example:
+```hcl
+hub_region_mapping = {
+  primary   = "uksouth"
+  secondary = "ukwest"
+}
+```
+DESCRIPTION
+}
+
+###############################################################################
+# Remote State Configuration - Platform Shared
+###############################################################################
+
+variable "platform_shared_state" {
+  type = object({
+    resource_group_name  = string
+    storage_account_name = string
+    container_name       = string
+    key                  = string
+    subscription_id      = string
+  })
+  description = <<DESCRIPTION
+Configuration for accessing the platform_shared Terraform remote state.
+
+Properties:
+- `resource_group_name` - The name of the resource group containing the storage account
+- `storage_account_name` - The name of the storage account containing the state file
+- `container_name` - The name of the blob container containing the state file
+- `key` - The key (path) of the state file within the container
+- `subscription_id` - The subscription ID where the storage account resides
+
+Example:
+```hcl
+platform_shared_state = {
+  resource_group_name  = "rg-alz-mgmt-state-uksouth-001"
+  storage_account_name = "stoalzmgmtuks001"
+  container_name       = "mgmt-tfstate"
+  key                  = "terraform.tfstate"
+  subscription_id      = "00000000-0000-0000-0000-000000000000"
+}
+```
+DESCRIPTION
+}
+
+###############################################################################
+# Default Resource Toggles
+###############################################################################
+
+variable "enable_default_umi" {
+  type        = bool
+  default     = true
+  description = "Enable creation of a default User Managed Identity per region for workload operations (backup, deployment, etc.)."
+}
+
+variable "enable_default_nsg" {
+  type        = bool
+  default     = true
+  description = "Enable creation of a default NSG per subnet with Azure default rules recreated at priority 4000+."
+}
+
+variable "enable_default_route_table" {
+  type        = bool
+  default     = true
+  description = "Enable creation of a default route table per region that routes all traffic (0.0.0.0/0) to the hub firewall. Only applies when connectivity_type is 'hub_and_spoke'."
+}
+
+variable "enable_default_role_assignment" {
+  type        = bool
+  default     = false
+  description = "Enable creation of a default Contributor role assignment for the subscription using the specified principal."
+}
+
+variable "default_contributor_principal_id" {
+  type        = string
+  default     = null
+  description = "The principal ID (Object ID) of the group or user to assign Contributor role. Required when enable_default_role_assignment is true."
+}
+
+variable "compute_enabled" {
+  type        = bool
+  default     = true
+  description = "Enable or disable deployment of compute resources (VMs). When false, no VMs will be deployed regardless of the compute variable contents."
 }

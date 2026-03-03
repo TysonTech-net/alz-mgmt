@@ -4,12 +4,11 @@ policy_assignments_to_add: [
     # 'Win-VM-Eventlogs-DCR',
     "UK-Official-and-UK-NHS",
     "CIS-Msft-Benchmark-v2",
-    "Deploy-Diag-LogsAll",          # allLogs category (comprehensive) - custom override using built-in initiative 0884adba-2312-4468-abeb-5422caed1038
+    "Deploy-Diag-LogsAll", # allLogs category (comprehensive) - custom override using built-in initiative 0884adba-2312-4468-abeb-5422caed1038
     "Deploy-VM-Monitoring",
-    "Append-Tag-From-RG",
-    # Tagging Policies
-    "Enforce-VM-Tag-Values",          # Requires Environment tag with specific values on VMs
-    "Audit-Tags-Mandatory",           # Enforces required tags (configurable via mandatory_tags local)
+    # Tagging Policies (Append-Tag-From-RG handled by scc.policy.append_tags.tf for all tags)
+    "Enforce-VM-Tag-Values", # Requires Environment tag with specific values on VMs
+    "Audit-Tags-Mandatory-Rg", # Enforces required tags on resource groups
     # 'Deploy-Lock-Resource-Groups',
     # Backup & Activity Log (Auto-Remediation) - from ALZ library
     "Deploy-VM-Backup",
@@ -18,14 +17,14 @@ policy_assignments_to_add: [
     "Deny-IP-forwarding",
     "Deny-MgmtPorts-Internet",
     "Deny-Subnet-Without-Nsg",
-    "Deny-Subnet-No-Udr",             # Requires UDR on all subnets (excludes special subnets)
+    # "Deny-Subnet-No-Udr",             # Requires UDR on all subnets (excludes special subnets)
   ]
-policy_assignments_to_remove: []
+policy_assignments_to_remove: [
+    "Deploy-Diag-LogsCat", # Removed - using Deploy-Diag-LogsAll instead (allLogs category)
+  ]
 policy_definitions_to_add:
   [
     "Enforce-VM-Tag-and-Values",
-    "Audit-Tags-Mandatory",
-    "Deny-Subnet-Without-Udr",
   ]
 policy_definitions_to_remove: []
 policy_set_definitions_to_add: []

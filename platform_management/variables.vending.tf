@@ -260,9 +260,9 @@ vending = {
     location = "uksouth"
     virtual_network_enabled = true
     virtual_networks = {
-      identity = {
-        name          = "vnet-identity-uks"
-        address_space = ["10.0.0.0/24"]
+      management = {
+        name          = "vnet-mgmt-uks"
+        address_space = ["10.0.3.0/27"]
         # ...
       }
     }
@@ -271,9 +271,9 @@ vending = {
     location = "ukwest"
     virtual_network_enabled = true
     virtual_networks = {
-      identity = {
-        name          = "vnet-identity-ukw"
-        address_space = ["10.1.0.0/24"]
+      management = {
+        name          = "vnet-mgmt-ukw"
+        address_space = ["10.1.3.0/27"]
         # ...
       }
     }

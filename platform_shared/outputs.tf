@@ -50,6 +50,18 @@ output "hub_and_spoke_vnet_route_tables_user_subnets" {
   value = local.connectivity_hub_and_spoke_vnet_enabled ? module.hub_and_spoke_vnet[0].route_tables_user_subnets : null
 }
 
+output "hub_and_spoke_vnet_route_tables_gateway" {
+  description = "Gateway subnet route table IDs (if gateway route table is enabled)"
+  value       = local.connectivity_hub_and_spoke_vnet_enabled ? try(module.hub_and_spoke_vnet[0].route_tables_gateway, {}) : null
+}
+
+output "hub_and_spoke_vnet_address_spaces" {
+  description = "Hub VNet address spaces per region (for spoke UDR configuration)"
+  value = local.connectivity_hub_and_spoke_vnet_enabled ? {
+    for key, hub in var.hub_virtual_networks : key => hub.hub_virtual_network.address_space
+  } : null
+}
+
 output "hub_and_spoke_vnet_full_output" {
   value = local.connectivity_hub_and_spoke_vnet_enabled ? module.hub_and_spoke_vnet[0] : null
 }

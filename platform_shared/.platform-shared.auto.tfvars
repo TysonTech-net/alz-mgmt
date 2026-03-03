@@ -299,6 +299,18 @@ management_group_settings = {
             enableAscForCspm                            = "DeployIfNotExists"
           }
         }
+        # TEMPORARY: Set to Audit to allow AMBA RG creation, then revert to Deny
+        Audit-Tags-Mandatory-Rg = {
+          parameters = {
+            effect = "Audit"
+          }
+        }
+        # Fix: resourceGroupLocation parameter was not substituted (literal ${default_location})
+        Deploy-SvcHealth-BuiltIn = {
+          parameters = {
+            resourceGroupLocation = "$${starter_location_01}"
+          }
+        }
       }
     }
   }
@@ -382,6 +394,21 @@ hub_virtual_networks = {
       route_table_name_firewall     = "$${primary_route_table_firewall_name}"
       route_table_name_user_subnets = "$${primary_route_table_user_subnets_name}"
       subnets                       = {}
+      # AudioCodes cross-region routes via peer hub firewall
+      route_table_entries_firewall = [
+        {
+          name                = "AudioCodesProdWest"
+          address_prefix      = "10.177.1.0/24"
+          next_hop_type       = "VirtualAppliance"
+          next_hop_ip_address = "10.1.0.4"
+        },
+        {
+          name                = "AudioCodesSBCProdWest"
+          address_prefix      = "10.177.3.0/24"
+          next_hop_type       = "VirtualAppliance"
+          next_hop_ip_address = "10.1.0.4"
+        }
+      ]
     }
     firewall = {
       subnet_address_prefix            = "$${primary_firewall_subnet_address_prefix}"
@@ -389,18 +416,74 @@ hub_virtual_networks = {
       name                             = "$${primary_firewall_name}"
       default_ip_configuration = {
         public_ip_config = {
-          name = "$${primary_firewall_public_ip_name}"
+          name                 = "$${primary_firewall_public_ip_name}"
+          ddos_protection_mode = "Enabled"
         }
       }
       management_ip_enabled = "$${primary_firewall_management_ip_enabled}"
       management_ip_configuration = {
         public_ip_config = {
-          name = "$${primary_firewall_management_public_ip_name}"
+          name                 = "$${primary_firewall_management_public_ip_name}"
+          ddos_protection_mode = "Enabled"
+        }
+      }
+      # Additional Public IPs for OVOC, UMP, ServiceServer (prod and nle environments)
+      # Note: When using ip_configurations, the default PIP must be included with is_default = true
+      ip_configurations = {
+        default = {
+          is_default = true
+          public_ip_config = {
+            name                 = "$${primary_firewall_public_ip_name}"
+            ddos_protection_mode = "Enabled"
+          }
+        }
+        ovoc_prod = {
+          name = "pip-ovoc-prod-uks-001"
+          public_ip_config = {
+            name                 = "pip-ovoc-prod-uks-001"
+            ddos_protection_mode = "Enabled"
+          }
+        }
+        ump_prod = {
+          name = "pip-ump-prod-uks-001"
+          public_ip_config = {
+            name                 = "pip-ump-prod-uks-001"
+            ddos_protection_mode = "Enabled"
+          }
+        }
+        serviceserver_prod = {
+          name = "pip-serviceserver-prod-uks-001"
+          public_ip_config = {
+            name                 = "pip-serviceserver-prod-uks-001"
+            ddos_protection_mode = "Enabled"
+          }
+        }
+        ovoc_nle = {
+          name = "pip-ovoc-nle-uks-001"
+          public_ip_config = {
+            name                 = "pip-ovoc-nle-uks-001"
+            ddos_protection_mode = "Enabled"
+          }
+        }
+        ump_nle = {
+          name = "pip-ump-nle-uks-001"
+          public_ip_config = {
+            name                 = "pip-ump-nle-uks-001"
+            ddos_protection_mode = "Enabled"
+          }
+        }
+        serviceserver_nle = {
+          name = "pip-serviceserver-nle-uks-001"
+          public_ip_config = {
+            name                 = "pip-serviceserver-nle-uks-001"
+            ddos_protection_mode = "Enabled"
+          }
         }
       }
     }
     firewall_policy = {
-      name = "$${primary_firewall_policy_name}"
+      name                      = "$${primary_firewall_policy_name}"
+      threat_intelligence_mode  = "Deny"
       insights = {
         enabled                            = true
         default_log_analytics_workspace_id = "$${log_analytics_workspace_id}"
@@ -481,6 +564,21 @@ hub_virtual_networks = {
       route_table_name_firewall     = "$${secondary_route_table_firewall_name}"
       route_table_name_user_subnets = "$${secondary_route_table_user_subnets_name}"
       subnets                       = {}
+      # AudioCodes cross-region routes via peer hub firewall
+      route_table_entries_firewall = [
+        {
+          name                = "AudioCodesProdSouth"
+          address_prefix      = "10.177.0.0/24"
+          next_hop_type       = "VirtualAppliance"
+          next_hop_ip_address = "10.0.0.4"
+        },
+        {
+          name                = "AudioCodesSBCProdSouth"
+          address_prefix      = "10.177.2.0/24"
+          next_hop_type       = "VirtualAppliance"
+          next_hop_ip_address = "10.0.0.4"
+        }
+      ]
     }
     firewall = {
       subnet_address_prefix            = "$${secondary_firewall_subnet_address_prefix}"
@@ -488,18 +586,74 @@ hub_virtual_networks = {
       name                             = "$${secondary_firewall_name}"
       default_ip_configuration = {
         public_ip_config = {
-          name = "$${secondary_firewall_public_ip_name}"
+          name                 = "$${secondary_firewall_public_ip_name}"
+          ddos_protection_mode = "Enabled"
         }
       }
       management_ip_enabled = "$${secondary_firewall_management_ip_enabled}"
       management_ip_configuration = {
         public_ip_config = {
-          name = "$${secondary_firewall_management_public_ip_name}"
+          name                 = "$${secondary_firewall_management_public_ip_name}"
+          ddos_protection_mode = "Enabled"
+        }
+      }
+      # Additional Public IPs for OVOC, UMP, ServiceServer (prod and nle environments)
+      # Note: When using ip_configurations, the default PIP must be included with is_default = true
+      ip_configurations = {
+        default = {
+          is_default = true
+          public_ip_config = {
+            name                 = "$${secondary_firewall_public_ip_name}"
+            ddos_protection_mode = "Enabled"
+          }
+        }
+        ovoc_prod = {
+          name = "pip-ovoc-prod-ukw-001"
+          public_ip_config = {
+            name                 = "pip-ovoc-prod-ukw-001"
+            ddos_protection_mode = "Enabled"
+          }
+        }
+        ump_prod = {
+          name = "pip-ump-prod-ukw-001"
+          public_ip_config = {
+            name                 = "pip-ump-prod-ukw-001"
+            ddos_protection_mode = "Enabled"
+          }
+        }
+        serviceserver_prod = {
+          name = "pip-serviceserver-prod-ukw-001"
+          public_ip_config = {
+            name                 = "pip-serviceserver-prod-ukw-001"
+            ddos_protection_mode = "Enabled"
+          }
+        }
+        ovoc_nle = {
+          name = "pip-ovoc-nle-ukw-001"
+          public_ip_config = {
+            name                 = "pip-ovoc-nle-ukw-001"
+            ddos_protection_mode = "Enabled"
+          }
+        }
+        ump_nle = {
+          name = "pip-ump-nle-ukw-001"
+          public_ip_config = {
+            name                 = "pip-ump-nle-ukw-001"
+            ddos_protection_mode = "Enabled"
+          }
+        }
+        serviceserver_nle = {
+          name = "pip-serviceserver-nle-ukw-001"
+          public_ip_config = {
+            name                 = "pip-serviceserver-nle-ukw-001"
+            ddos_protection_mode = "Enabled"
+          }
         }
       }
     }
     firewall_policy = {
-      name = "$${secondary_firewall_policy_name}"
+      name                      = "$${secondary_firewall_policy_name}"
+      threat_intelligence_mode  = "Deny"
       insights = {
         enabled                            = true
         default_log_analytics_workspace_id = "$${log_analytics_workspace_id}"

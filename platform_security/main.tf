@@ -1,21 +1,39 @@
-module "regions" {
-  source           = "Azure/avm-utl-regions/azurerm"
-  version          = "~> 0.9"
-  enable_telemetry = false
-}
+###############################################################################
+# Module - Workload Resources Stack
+###############################################################################
 
-locals {
-  primary_location       = var.starter_locations[0]
-  primary_location_short = module.regions.regions_by_name_or_display_name[local.primary_location].geo_code
+module "workload_resources" {
+  source = "../../alz-modules/stacks/scc-workload-resources"
 
-  base_name_primary = "shared-security-prod-${local.primary_location_short}"
+  # Subscription
+  subscription = var.subscription
 
-  baseline_tags = {
-    deployed_by = "terraform"
-  }
+  # Naming Convention (for auto-generated resource names)
+  naming = var.naming
 
-  final_tags = merge(
-    local.baseline_tags,
-    coalesce(var.tags, {})
-  )
+  # Connectivity
+  connectivity_type     = var.connectivity_type
+  platform_shared_state = var.platform_shared_state
+  hub_region_mapping    = var.hub_region_mapping
+
+  # Tags and Telemetry
+  tags             = var.tags
+  enable_telemetry = var.enable_telemetry
+
+  # Default Resource Toggles
+  enable_default_umi             = var.enable_default_umi
+  enable_default_nsg             = var.enable_default_nsg
+  enable_default_route_table     = var.enable_default_route_table
+  enable_default_role_assignment = var.enable_default_role_assignment
+  default_contributor_principal_id = var.default_contributor_principal_id
+
+  # Vending Configuration (Resource Groups, VNets, etc.)
+  vending = var.vending
+
+  # Management Configuration (RSV, Key Vault, etc.)
+  management = var.management
+
+  # Compute Configuration (Virtual Machines)
+  compute_enabled = var.compute_enabled
+  compute         = var.compute
 }

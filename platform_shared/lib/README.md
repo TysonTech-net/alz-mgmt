@@ -49,7 +49,7 @@ Applied to: Root management group and inherited by all child MGs
 |---|---|---|
 | **UK-Official-and-UK-NHS** | Audit | UK OFFICIAL and UK NHS compliance standards |
 | **CIS-Msft-Benchmark-v2** | Audit | CIS Microsoft Azure Foundations Benchmark v2.0 |
-| **Deploy-Diag-LogsCat** | DeployIfNotExists | Deploys diagnostic settings to send allLogs category group to Log Analytics |
+| **Deploy-Diag-LogsAll** | DeployIfNotExists | Deploys diagnostic settings to send allLogs category group to Log Analytics |
 | **Enable-Azure-Monitor-VM** | DeployIfNotExists | Deploys Azure Monitor Agent (AMA) to VMs and VMSSs for monitoring |
 | **Append-Tag-From-RG** | Append | Inherits tags from resource group to child resources |
 | **Audit-Tags-Mandatory** | Audit | Audits resources for required tags (configurable via `mandatory_tags` variable) |
@@ -157,7 +157,7 @@ Policy assignment JSON files define **HOW** to assign a policy, including:
 | `append_tag_from_rg.alz_policy_assignment.json` | Append-Tag-From-RG | Append | Tag names to inherit from RG |
 | `associate_dcr_win_eventlogs.alz_policy_assignment.json` | Win-VM-Eventlogs-DCR | DeployIfNotExists | Data Collection Rule ID for Windows event logs (currently disabled) |
 | `cis.alz_policy_assignment.json` | CIS-Msft-Benchmark-v2 | Audit | CIS benchmark policy set assignment |
-| `deploy_diag_logscat.alz_policy_assignment.json` | Deploy-Diag-LogsCat | DeployIfNotExists | Log Analytics workspace ID, logs/metrics enabled |
+| `Deploy-Diag-LogsAll.alz_policy_assignment.json` | Deploy-Diag-LogsAll | DeployIfNotExists | Log Analytics workspace ID, logs/metrics enabled |
 | `enable_azure_monitor_vm.alz_policy_assignment.json` | Enable-Azure-Monitor-VM | DeployIfNotExists | Data Collection Rule ID, user-assigned managed identity |
 | `uk_official_and_uk_nhs.alz_policy_assignment.json` | UK-Official-and-UK-NHS | Audit | UK government compliance policy set |
 
@@ -341,14 +341,14 @@ For **existing resources**, DeployIfNotExists policies do not automatically reme
 
 **Solution**: Manually assign roles to the managed identity.
 
-#### For Deploy-Diag-LogsCat (Comprehensive Diagnostic Settings)
+#### For Deploy-Diag-LogsAll (Comprehensive Diagnostic Settings)
 
 This policy covers multiple resource types, so it needs broad permissions:
 
 ```bash
 # Get the policy assignment's managed identity principal ID
 PRINCIPAL_ID=$(az policy assignment show \
-  --name "Deploy-Diag-LogsCat" \
+  --name "Deploy-Diag-LogsAll" \
   --scope "/providers/Microsoft.Management/managementGroups/<your-mg-id>" \
   --query identity.principalId -o tsv)
 
@@ -423,9 +423,11 @@ platform_shared/lib/
 ├── policy_assignments/
 │   ├── append_tag_from_rg.alz_policy_assignment.json
 │   ├── associate_dcr_win_eventlogs.alz_policy_assignment.json
+│   ├── audit_tags_mandatory.alz_policy_assignment.json
 │   ├── cis.alz_policy_assignment.json
-│   ├── deploy_diag_logscat.alz_policy_assignment.json
-│   ├── enable_azure_monitor_vm.alz_policy_assignment.json
+│   ├── deny_subnet_without_udr.alz_policy_assignment.json
+│   ├── Deploy-Diag-LogsAll.alz_policy_assignment.json
+│   ├── enforce_vm_tag_and_values.alz_policy_assignment.json
 │   └── uk_official_and_uk_nhs.alz_policy_assignment.json
 ├── policy_definitions/
 │   ├── activity_logs_to_event_hub.alz_policy_definition.json

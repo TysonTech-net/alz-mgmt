@@ -25,5 +25,9 @@ amba_disable_tag_values = ["true"]
 bring_your_own_user_assigned_managed_identity = false
 
 tags = {
-  "deployed_by" = "amba"
+  deployed_by = "amba"
+  source      = "Azure Monitor Baseline Alerts"
+  Environment = "production"
+  Owner       = "platform-team"
+  CostCenter  = "IT-Infrastructure"
 }

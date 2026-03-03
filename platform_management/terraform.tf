@@ -1,35 +1,25 @@
 terraform {
-  required_version = "~> 1.12"
+  required_version = ">= 1.5.0"
+
+  backend "azurerm" {}
+
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "~> 4.0"
+      version = ">= 3.71.0"
     }
-    random = {
-      source  = "hashicorp/random"
-      version = "~> 3.7"
-    }
-  }
-  backend "azurerm" {}
-}
-
-provider "azurerm" {
-  subscription_id = var.subscription_ids["management"]
-  features {
-    resource_group {
-      prevent_deletion_if_contains_resources = false
+    azapi = {
+      source  = "azure/azapi"
+      version = ">= 2.4.0"
     }
   }
 }
 
-# Connectivity lookup (hub VNets live in the connectivity subscription)
 provider "azurerm" {
-  alias                           = "connectivity"
-  subscription_id                 = var.subscription_ids["connectivity"]
-  resource_provider_registrations = "none"
-  features {
-    resource_group {
-      prevent_deletion_if_contains_resources = false
-    }
-  }
+  features {}
+  subscription_id = var.subscription
+}
+
+provider "azapi" {
+  subscription_id = var.subscription
 }

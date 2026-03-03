@@ -36,7 +36,7 @@ module "amba_policy" {
   source  = "Azure/avm-ptn-alz/azurerm"
   version = "0.12.0"
 
-  architecture_name  = "custom"
+  architecture_name = "custom"
   location           = local.amba_location
   parent_resource_id = data.azapi_client_config.current.tenant_id
   policy_default_values = {
