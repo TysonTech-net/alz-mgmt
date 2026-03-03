@@ -14,7 +14,11 @@
     "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/eab1f514-22e3-42e3-9a1f-e1dc9199355c",
     "definitionVersion": "4.*.*",
     "scope": "${current_scope_resource_id}",
-    "enforcementMode": null
+    "enforcementMode": "Default",
+    "roleDefinitionIds": [
+      "/providers/microsoft.authorization/roleDefinitions/749f88d5-cbae-40b8-bcfc-e573ddc772fa",
+      "/providers/microsoft.authorization/roleDefinitions/92aaf0da-9dab-42b6-94a3-d43ce8d16293"
+    ]
   },
   "location": "${default_location}",
   "identity": {

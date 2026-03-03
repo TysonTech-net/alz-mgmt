@@ -1,0 +1,53 @@
+{
+  "$schema": "https://raw.githubusercontent.com/Azure/Azure-Landing-Zones-Library/main/schemas/default_policy_values.json",
+  "defaults": [
+    {
+      "default_name": "mandatory_tags",
+      "description": "Array of mandatory tags that must be present on all resources.",
+      "policy_assignments": [
+        {
+          "parameter_names": [
+            "mandatoryTags"
+          ],
+          "policy_assignment_name": "Audit-Tags-Mandatory-Rg"
+        }
+      ]
+    },
+    {
+      "default_name": "log_analytics_workspace_id",
+      "description": "Log Analytics workspace resource ID for diagnostic settings and activity logs.",
+      "policy_assignments": [
+        {
+          "parameter_names": [
+            "logAnalytics"
+          ],
+          "policy_assignment_name": "Deploy-AzActivity-Log"
+        },
+        {
+          "parameter_names": [
+            "logAnalyticsWorkspaceId"
+          ],
+          "policy_assignment_name": "Deploy-AzSqlDb-Auditing"
+        },
+        {
+          "parameter_names": [
+            "logAnalytics"
+          ],
+          "policy_assignment_name": "Deploy-Diag-LogsAll"
+        },
+        {
+          "parameter_names": [
+            "logAnalytics"
+          ],
+          "policy_assignment_name": "Deploy-MDFC-Config-H224"
+        },
+        {
+          "parameter_names": [
+            "userWorkspaceResourceId"
+          ],
+          "policy_assignment_name": "Deploy-MDFC-DefSQL-AMA"
+        }
+      ]
+    }
+  ]
+}
