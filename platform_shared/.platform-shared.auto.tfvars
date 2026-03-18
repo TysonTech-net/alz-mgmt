@@ -407,6 +407,18 @@ hub_virtual_networks = {
           address_prefix      = "10.177.3.0/24"
           next_hop_type       = "VirtualAppliance"
           next_hop_ip_address = "10.1.0.4"
+        },
+        {
+          name                = "AudioCodesNLEWest"
+          address_prefix      = "10.177.5.0/24"
+          next_hop_type       = "VirtualAppliance"
+          next_hop_ip_address = "10.1.0.4"
+        },
+        {
+          name                = "AudioCodesSBCNLEWest"
+          address_prefix      = "10.177.7.0/24"
+          next_hop_type       = "VirtualAppliance"
+          next_hop_ip_address = "10.1.0.4"
         }
       ]
     }
@@ -482,8 +494,8 @@ hub_virtual_networks = {
       }
     }
     firewall_policy = {
-      name                      = "$${primary_firewall_policy_name}"
-      threat_intelligence_mode  = "Deny"
+      name                     = "$${primary_firewall_policy_name}"
+      threat_intelligence_mode = "Deny"
       insights = {
         enabled                            = true
         default_log_analytics_workspace_id = "$${log_analytics_workspace_id}"
@@ -577,6 +589,18 @@ hub_virtual_networks = {
           address_prefix      = "10.177.2.0/24"
           next_hop_type       = "VirtualAppliance"
           next_hop_ip_address = "10.0.0.4"
+        },
+        {
+          name                = "AudioCodesNLESouth"
+          address_prefix      = "10.177.4.0/24"
+          next_hop_type       = "VirtualAppliance"
+          next_hop_ip_address = "10.0.0.4"
+        },
+        {
+          name                = "AudioCodesSBCNLESouth"
+          address_prefix      = "10.177.6.0/24"
+          next_hop_type       = "VirtualAppliance"
+          next_hop_ip_address = "10.0.0.4"
         }
       ]
     }
@@ -652,8 +676,8 @@ hub_virtual_networks = {
       }
     }
     firewall_policy = {
-      name                      = "$${secondary_firewall_policy_name}"
-      threat_intelligence_mode  = "Deny"
+      name                     = "$${secondary_firewall_policy_name}"
+      threat_intelligence_mode = "Deny"
       insights = {
         enabled                            = true
         default_log_analytics_workspace_id = "$${log_analytics_workspace_id}"

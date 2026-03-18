@@ -50,6 +50,8 @@ ip_groups = {
       "10.0.6.0/27",   # Security
       "10.177.0.0/24", # AudioCodes Production
       "10.177.2.0/24", # AudioCodes SBC Production
+      "10.177.4.0/24", # AudioCodes NLE
+      "10.177.6.0/24", # AudioCodes SBC NLE
     ]
 
     # Spoke networks in other regions (cross-region connectivity)
@@ -59,7 +61,12 @@ ip_groups = {
       "10.1.6.0/27",   # Security DR
       "10.177.1.0/24", # AudioCodes Production DR
       "10.177.3.0/24", # AudioCodes SBC Production DR
+      "10.177.5.0/24", # AudioCodes NLE DR
+      "10.177.7.0/24", # AudioCodes SBC NLE DR
     ]
+
+    # Jumpbox/management subnets (SSH + RDP access to all spokes)
+    jumpboxes = ["10.0.5.0/26"] # Management spoke
 
     # On-premises networks (VPN/ExpressRoute connected)
     on_prem = []
@@ -74,6 +81,10 @@ ip_groups = {
       collectors = ["10.0.5.0/26"] # Management spoke
       targets    = ["10.0.0.0/16"] # All monitored networks
     }
+
+    tenable = {
+      scanners = ["10.0.6.0/28"] # snet-security-prod-tenable-uks-001
+    }
   }
 
   secondary = {
@@ -86,6 +97,8 @@ ip_groups = {
       "10.1.6.0/27",   # Security DR
       "10.177.1.0/24", # AudioCodes Production DR
       "10.177.3.0/24", # AudioCodes SBC Production DR
+      "10.177.5.0/24", # AudioCodes NLE DR
+      "10.177.7.0/24", # AudioCodes SBC NLE DR
     ]
 
     # Spoke networks in other regions (cross-region connectivity)
@@ -95,13 +108,22 @@ ip_groups = {
       "10.0.6.0/27",   # Security
       "10.177.0.0/24", # AudioCodes Production
       "10.177.2.0/24", # AudioCodes SBC Production
+      "10.177.4.0/24", # AudioCodes NLE
+      "10.177.6.0/24", # AudioCodes SBC NLE
     ]
+
+    # Jumpbox/management subnets (SSH + RDP access to all spokes)
+    jumpboxes = ["10.1.5.0/26"] # Management spoke DR
 
     on_prem         = []
     replication_dcs = []
     logicmonitor = {
       collectors = ["10.1.5.0/26"] # Management spoke DR
       targets    = ["10.1.0.0/16"] # All monitored networks DR
+    }
+
+    tenable = {
+      scanners = ["10.1.6.0/28"] # snet-security-prod-tenable-ukw-001
     }
   }
 }
@@ -116,6 +138,21 @@ rule_settings = {
   enable_spokes_to_on_prem   = false # No on-prem connectivity
   enable_on_prem_adds        = false # No on-prem ADDS access needed
   enable_on_prem_kerberos    = false # No on-prem Kerberos needed
+  enable_tenable             = true  # Tenable vulnerability scanning
+}
+
+###############################################################################
+# Traffic Rules - Override default spoke_to_spoke ports
+# Default would be TCP 22/80/443/445/3389/5985-5986 (too broad)
+# Bastion doesn't transit the firewall, so SSH/RDP/WinRM are unnecessary
+# SMB is handled by identity_dcs rules; HTTP should be explicit custom rules
+###############################################################################
+
+traffic_rules = {
+  spoke_to_spoke = {
+    ports     = ["443"]
+    protocols = ["TCP"]
+  }
 }
 
 ###############################################################################
@@ -126,20 +163,38 @@ rule_settings = {
 
 custom_ip_groups = {
   primary = {
-    ac_ovoc           = ["10.177.0.4", "10.177.0.132"]         # OVOC mgmt NIC + websocket NIC
-    ac_ump            = ["10.177.0.5"]                         # UMP server
-    ac_service_server = ["10.177.0.6"]                         # Service Server
-    ac_sbc_mgmt       = ["10.177.2.32/27", "10.177.3.32/27"]  # SBC mgmt subnets (uksouth + ukwest)
-    ac_sbc_trust      = ["10.177.2.64/27", "10.177.3.64/27"]  # SBC media/trust subnets
-    ac_sbc_untrust    = ["10.177.2.96/27", "10.177.3.96/27"]  # SBC signaling/untrust subnets
+    # AudioCodes
+    ac_ovoc           = ["10.177.0.4", "10.177.0.132"]       # OVOC mgmt NIC + websocket NIC
+    ac_ump            = ["10.177.0.5"]                       # UMP server
+    ac_service_server = ["10.177.0.6"]                       # Service Server
+    ac_sbc_mgmt       = ["10.177.2.32/27", "10.177.3.32/27"] # SBC mgmt subnets (uksouth + ukwest)
+    ac_sbc_trust      = ["10.177.2.64/27", "10.177.3.64/27"] # SBC media/trust subnets
+    ac_sbc_untrust    = ["10.177.2.96/27", "10.177.3.96/27"] # SBC signaling/untrust subnets
+
+    # AudioCodes NLE
+    ac_nle_ovoc           = ["10.177.4.4", "10.177.4.132"]       # NLE OVOC mgmt + websocket
+    ac_nle_ump            = ["10.177.4.5"]                       # NLE UMP
+    ac_nle_service_server = ["10.177.4.6"]                       # NLE Service Server
+    ac_nle_sbc_mgmt       = ["10.177.6.32/27", "10.177.7.32/27"] # NLE SBC mgmt subnets (uksouth + ukwest)
+    ac_nle_sbc_trust      = ["10.177.6.64/27", "10.177.7.64/27"] # NLE SBC media/trust subnets
+    ac_nle_sbc_untrust    = ["10.177.6.96/27", "10.177.7.96/27"] # NLE SBC signaling/untrust subnets
   }
   secondary = {
+    # AudioCodes
     ac_ovoc           = ["10.177.0.4", "10.177.0.132"] # OVOC mgmt + websocket (cross-region target)
-    ac_ump            = ["10.177.0.5"]         # UMP (uksouth — cross-region target)
-    ac_service_server = ["10.177.0.6"]         # Service Server (uksouth — cross-region target)
-    ac_sbc_mgmt       = ["10.177.3.32/27"]     # SBC mgmt subnet (ukwest only)
-    ac_sbc_trust      = ["10.177.3.64/27"]     # SBC media/trust subnet (ukwest only)
-    ac_sbc_untrust    = ["10.177.3.96/27"]     # SBC signaling/untrust subnet (ukwest only)
+    ac_ump            = ["10.177.0.5"]                 # UMP (uksouth — cross-region target)
+    ac_service_server = ["10.177.0.6"]                 # Service Server (uksouth — cross-region target)
+    ac_sbc_mgmt       = ["10.177.3.32/27"]             # SBC mgmt subnet (ukwest only)
+    ac_sbc_trust      = ["10.177.3.64/27"]             # SBC media/trust subnet (ukwest only)
+    ac_sbc_untrust    = ["10.177.3.96/27"]             # SBC signaling/untrust subnet (ukwest only)
+
+    # AudioCodes NLE DR (expected IPs post-ASR failover to ukwest)
+    ac_nle_ovoc           = ["10.177.5.4", "10.177.5.132"] # NLE OVOC DR mgmt + websocket
+    ac_nle_ump            = ["10.177.5.5"]                 # NLE UMP DR
+    ac_nle_service_server = ["10.177.5.6"]                 # NLE Service Server DR
+    ac_nle_sbc_mgmt       = ["10.177.7.32/27"]             # NLE SBC mgmt subnet (ukwest only)
+    ac_nle_sbc_trust      = ["10.177.7.64/27"]             # NLE SBC media/trust subnet (ukwest only)
+    ac_nle_sbc_untrust    = ["10.177.7.96/27"]             # NLE SBC signaling/untrust subnet (ukwest only)
   }
 }
 
@@ -200,7 +255,7 @@ custom_dnat_collections = {
           source_addresses    = ["94.10.126.47"] # AudioCodes office (Mireille)
           destination_address = "51.143.231.109"
           destination_port    = "443"
-          translated_address  = "10.177.1.4" # TODO: Update with actual NLE IP
+          translated_address  = "10.177.4.132"
           translated_port     = "443"
           protocols           = ["TCP"]
         },
@@ -209,7 +264,7 @@ custom_dnat_collections = {
           source_addresses    = ["94.10.126.47"] # AudioCodes office (Mireille)
           destination_address = "20.254.18.209"
           destination_port    = "443"
-          translated_address  = "10.177.1.5" # TODO: Update with actual NLE IP
+          translated_address  = "10.177.4.5"
           translated_port     = "443"
           protocols           = ["TCP"]
         },
@@ -218,7 +273,7 @@ custom_dnat_collections = {
           source_addresses    = ["94.10.126.47"] # AudioCodes office (Mireille)
           destination_address = "20.49.150.215"
           destination_port    = "443"
-          translated_address  = "10.177.1.6" # TODO: Update with actual NLE IP
+          translated_address  = "10.177.4.6"
           translated_port     = "443"
           protocols           = ["TCP"]
         },
@@ -267,7 +322,7 @@ custom_dnat_collections = {
           source_addresses    = ["94.10.126.47"] # AudioCodes office (Mireille)
           destination_address = "51.141.98.36"
           destination_port    = "443"
-          translated_address  = "10.178.1.4" # TODO: Update with actual NLE DR IP
+          translated_address  = "10.177.5.132" # TODO: Update when NLE DR VMs deployed
           translated_port     = "443"
           protocols           = ["TCP"]
         },
@@ -276,7 +331,7 @@ custom_dnat_collections = {
           source_addresses    = ["94.10.126.47"] # AudioCodes office (Mireille)
           destination_address = "51.104.56.39"
           destination_port    = "443"
-          translated_address  = "10.178.1.5" # TODO: Update with actual NLE DR IP
+          translated_address  = "10.177.5.5" # TODO: Update when NLE DR VMs deployed
           translated_port     = "443"
           protocols           = ["TCP"]
         },
@@ -285,7 +340,7 @@ custom_dnat_collections = {
           source_addresses    = ["94.10.126.47"] # AudioCodes office (Mireille)
           destination_address = "51.142.157.27"
           destination_port    = "443"
-          translated_address  = "10.178.1.6" # TODO: Update with actual NLE DR IP
+          translated_address  = "10.177.5.6" # TODO: Update when NLE DR VMs deployed
           translated_port     = "443"
           protocols           = ["TCP"]
         },
@@ -309,67 +364,60 @@ custom_network_collections = {
       priority = 701
       rules = [
         {
-          name                 = "SBC-to-OVOC-QoE"
-          source_ip_groups     = ["ac_sbc_mgmt"]
+          name                  = "SBC-to-OVOC-QoE"
+          source_ip_groups      = ["ac_sbc_mgmt"]
           destination_ip_groups = ["ac_ovoc"]
-          destination_ports    = ["5001"]
-          protocols            = ["TCP"]
+          destination_ports     = ["5001"]
+          protocols             = ["TCP"]
         },
         {
-          name                 = "SBC-to-OVOC-SNMP-Traps"
-          source_ip_groups     = ["ac_sbc_mgmt"]
+          name                  = "SBC-to-OVOC-SNMP-Traps"
+          source_ip_groups      = ["ac_sbc_mgmt"]
           destination_ip_groups = ["ac_ovoc"]
-          destination_ports    = ["162", "1161"]
-          protocols            = ["UDP"]
+          destination_ports     = ["162", "1161"]
+          protocols             = ["UDP"]
         },
         {
-          name                 = "SBC-to-OVOC-NTP"
-          source_ip_groups     = ["ac_sbc_mgmt"]
+          name                  = "SBC-to-OVOC-NTP"
+          source_ip_groups      = ["ac_sbc_mgmt"]
           destination_ip_groups = ["ac_ovoc"]
-          destination_ports    = ["123"]
-          protocols            = ["UDP"]
+          destination_ports     = ["123"]
+          protocols             = ["UDP"]
         },
         {
-          name                 = "SBC-to-ServiceServer-Syslog"
-          source_ip_groups     = ["ac_sbc_mgmt"]
+          name                  = "SBC-to-ServiceServer-Syslog"
+          source_ip_groups      = ["ac_sbc_mgmt"]
           destination_ip_groups = ["ac_service_server"]
-          destination_ports    = ["514"]
-          protocols            = ["UDP"]
+          destination_ports     = ["514"]
+          protocols             = ["UDP"]
         },
         {
-          name                 = "SBC-to-ServiceServer-DR"
-          source_ip_groups     = ["ac_sbc_mgmt"]
+          name                  = "SBC-to-ServiceServer-DR"
+          source_ip_groups      = ["ac_sbc_mgmt"]
           destination_ip_groups = ["ac_service_server"]
-          destination_ports    = ["925"]
-          protocols            = ["UDP"]
+          destination_ports     = ["925"]
+          protocols             = ["UDP"]
         },
         {
-          name                 = "OVOC-to-SBC-SSH"
-          source_ip_groups     = ["ac_ovoc"]
+          name                  = "OVOC-to-SBC-SNMP"
+          source_ip_groups      = ["ac_ovoc"]
           destination_ip_groups = ["ac_sbc_mgmt"]
-          destination_ports    = ["22"]
-          protocols            = ["TCP"]
+          destination_ports     = ["161"]
+          protocols             = ["UDP"]
         },
         {
-          name                 = "OVOC-to-SBC-SNMP"
-          source_ip_groups     = ["ac_ovoc"]
+          name                  = "OVOC-to-SBC-SNMP-Inform"
+          source_ip_groups      = ["ac_ovoc"]
           destination_ip_groups = ["ac_sbc_mgmt"]
-          destination_ports    = ["161"]
-          protocols            = ["UDP"]
+          destination_ports     = ["80", "1161"]
+          protocols             = ["UDP"]
         },
         {
-          name                 = "OVOC-to-SBC-SNMP-Inform"
-          source_ip_groups     = ["ac_ovoc"]
+          name                  = "OVOC-to-SBC-SSH"
+          source_ip_groups      = ["ac_ovoc"]
           destination_ip_groups = ["ac_sbc_mgmt"]
-          destination_ports    = ["80", "1161"]
-          protocols            = ["UDP"]
-        },
-        {
-          name                 = "OVOC-to-SBC-HTTPS"
-          source_ip_groups     = ["ac_ovoc"]
-          destination_ip_groups = ["ac_sbc_mgmt"]
-          destination_ports    = ["443"]
-          protocols            = ["TCP"]
+          destination_ports     = ["22"]
+          protocols             = ["TCP"]
         },
       ]
     }
@@ -381,32 +429,32 @@ custom_network_collections = {
       priority = 702
       rules = [
         {
-          name                 = "OVOC-to-UMP-HTTP-HTTPS"
-          source_ip_groups     = ["ac_ovoc"]
-          destination_ip_groups = ["ac_ump"]
-          destination_ports    = ["80", "443"]
-          protocols            = ["TCP"]
-        },
-        {
-          name                 = "OVOC-to-UMP-SS-SNMP"
-          source_ip_groups     = ["ac_ovoc"]
+          name                  = "OVOC-to-UMP-SS-SNMP"
+          source_ip_groups      = ["ac_ovoc"]
           destination_ip_groups = ["ac_ump", "ac_service_server"]
-          destination_ports    = ["161"]
-          protocols            = ["UDP"]
+          destination_ports     = ["161"]
+          protocols             = ["UDP"]
         },
         {
-          name                 = "UMP-to-OVOC-SBC-HTTP-HTTPS"
-          source_ip_groups     = ["ac_ump"]
-          destination_ip_groups = ["ac_ovoc", "ac_sbc_mgmt"]
-          destination_ports    = ["80", "443"]
-          protocols            = ["TCP"]
-        },
-        {
-          name                 = "UMP-SS-to-OVOC-SNMP-Traps"
-          source_ip_groups     = ["ac_ump", "ac_service_server"]
+          name                  = "UMP-SS-to-OVOC-SNMP-Traps"
+          source_ip_groups      = ["ac_ump", "ac_service_server"]
           destination_ip_groups = ["ac_ovoc"]
-          destination_ports    = ["162", "1161"]
-          protocols            = ["UDP"]
+          destination_ports     = ["162", "1161"]
+          protocols             = ["UDP"]
+        },
+        {
+          name                  = "OVOC-to-UMP-HTTP"
+          source_ip_groups      = ["ac_ovoc"]
+          destination_ip_groups = ["ac_ump"]
+          destination_ports     = ["80"]
+          protocols             = ["TCP"]
+        },
+        {
+          name                  = "UMP-to-OVOC-SBC-HTTP"
+          source_ip_groups      = ["ac_ump"]
+          destination_ip_groups = ["ac_ovoc", "ac_sbc_mgmt"]
+          destination_ports     = ["80"]
+          protocols             = ["TCP"]
         },
       ]
     }
@@ -468,6 +516,182 @@ custom_network_collections = {
           destination_ports     = ["*"]
           protocols             = ["TCP", "UDP"]
         }
+      ]
+    }
+
+    #---------------------------------------------------------------------------
+    # NLE: OVOC ↔ UMP / Service Server (server-to-server management)
+    #---------------------------------------------------------------------------
+    "AudioCodes-NLE-Server-Management" = {
+      priority = 705
+      rules = [
+        {
+          name                  = "NLE-OVOC-to-UMP-SS-SNMP"
+          source_ip_groups      = ["ac_nle_ovoc"]
+          destination_ip_groups = ["ac_nle_ump", "ac_nle_service_server"]
+          destination_ports     = ["161"]
+          protocols             = ["UDP"]
+        },
+        {
+          name                  = "NLE-UMP-SS-to-OVOC-SNMP-Traps"
+          source_ip_groups      = ["ac_nle_ump", "ac_nle_service_server"]
+          destination_ip_groups = ["ac_nle_ovoc"]
+          destination_ports     = ["162", "1161"]
+          protocols             = ["UDP"]
+        },
+        {
+          name                  = "NLE-OVOC-to-UMP-HTTP"
+          source_ip_groups      = ["ac_nle_ovoc"]
+          destination_ip_groups = ["ac_nle_ump"]
+          destination_ports     = ["80"]
+          protocols             = ["TCP"]
+        },
+        {
+          name                  = "NLE-UMP-to-OVOC-SBC-HTTP"
+          source_ip_groups      = ["ac_nle_ump"]
+          destination_ip_groups = ["ac_nle_ovoc", "ac_nle_sbc_mgmt"]
+          destination_ports     = ["80"]
+          protocols             = ["TCP"]
+        },
+      ]
+    }
+
+    #---------------------------------------------------------------------------
+    # NLE: SBC management ↔ OVOC / Service Server
+    #---------------------------------------------------------------------------
+    "AudioCodes-NLE-SBC-Management" = {
+      priority = 706
+      rules = [
+        {
+          name                  = "NLE-SBC-to-OVOC-QoE"
+          source_ip_groups      = ["ac_nle_sbc_mgmt"]
+          destination_ip_groups = ["ac_nle_ovoc"]
+          destination_ports     = ["5001"]
+          protocols             = ["TCP"]
+        },
+        {
+          name                  = "NLE-SBC-to-OVOC-SNMP-Traps"
+          source_ip_groups      = ["ac_nle_sbc_mgmt"]
+          destination_ip_groups = ["ac_nle_ovoc"]
+          destination_ports     = ["162", "1161"]
+          protocols             = ["UDP"]
+        },
+        {
+          name                  = "NLE-SBC-to-OVOC-NTP"
+          source_ip_groups      = ["ac_nle_sbc_mgmt"]
+          destination_ip_groups = ["ac_nle_ovoc"]
+          destination_ports     = ["123"]
+          protocols             = ["UDP"]
+        },
+        {
+          name                  = "NLE-SBC-to-ServiceServer-Syslog"
+          source_ip_groups      = ["ac_nle_sbc_mgmt"]
+          destination_ip_groups = ["ac_nle_service_server"]
+          destination_ports     = ["514"]
+          protocols             = ["UDP"]
+        },
+        {
+          name                  = "NLE-SBC-to-ServiceServer-DR"
+          source_ip_groups      = ["ac_nle_sbc_mgmt"]
+          destination_ip_groups = ["ac_nle_service_server"]
+          destination_ports     = ["925"]
+          protocols             = ["UDP"]
+        },
+        {
+          name                  = "NLE-OVOC-to-SBC-SNMP"
+          source_ip_groups      = ["ac_nle_ovoc"]
+          destination_ip_groups = ["ac_nle_sbc_mgmt"]
+          destination_ports     = ["161"]
+          protocols             = ["UDP"]
+        },
+        {
+          name                  = "NLE-OVOC-to-SBC-SNMP-Inform"
+          source_ip_groups      = ["ac_nle_ovoc"]
+          destination_ip_groups = ["ac_nle_sbc_mgmt"]
+          destination_ports     = ["80", "1161"]
+          protocols             = ["UDP"]
+        },
+        {
+          name                  = "NLE-OVOC-to-SBC-SSH"
+          source_ip_groups      = ["ac_nle_ovoc"]
+          destination_ip_groups = ["ac_nle_sbc_mgmt"]
+          destination_ports     = ["22"]
+          protocols             = ["TCP"]
+        },
+      ]
+    }
+
+    #---------------------------------------------------------------------------
+    # NLE: SBC → Internet (Teams & Gamma VoIP)
+    #---------------------------------------------------------------------------
+    "AudioCodes-NLE-SBC-Internet" = {
+      priority = 707
+      rules = [
+        {
+          name                  = "NLE-SBC-Media-to-Internet-RTP"
+          source_ip_groups      = ["ac_nle_sbc_trust"]
+          destination_addresses = ["*"]
+          destination_ports     = ["3478-3481", "49152-59999"]
+          protocols             = ["UDP"]
+        },
+        {
+          name                  = "NLE-SBC-Trust-to-Internet-SIP-TLS"
+          source_ip_groups      = ["ac_nle_sbc_trust"]
+          destination_addresses = ["*"]
+          destination_ports     = ["5061"]
+          protocols             = ["TCP"]
+        },
+        {
+          name                  = "NLE-SBC-Untrust-to-Internet-SIP"
+          source_ip_groups      = ["ac_nle_sbc_untrust"]
+          destination_addresses = ["*"]
+          destination_ports     = ["5060"]
+          protocols             = ["TCP", "UDP"]
+        },
+        {
+          name                  = "NLE-SBC-Untrust-to-Gamma-Media"
+          source_ip_groups      = ["ac_nle_sbc_untrust"]
+          destination_addresses = ["151.2.135.15", "151.2.135.16", "151.2.139.11", "151.2.139.12"]
+          destination_ports     = ["6000-40000"]
+          protocols             = ["UDP"]
+        },
+      ]
+    }
+
+    #---------------------------------------------------------------------------
+    # OVOC & UMP → Microsoft Services (Office365 service tag, TCP 443)
+    #---------------------------------------------------------------------------
+    "AudioCodes-Microsoft-Services" = {
+      priority = 708
+      rules = [
+        {
+          name                  = "OVOC-Prod-to-Office365"
+          source_ip_groups      = ["ac_ovoc"]
+          destination_addresses = ["Office365"]
+          destination_ports     = ["443"]
+          protocols             = ["TCP"]
+        },
+        {
+          name                  = "UMP-Prod-to-Office365"
+          source_ip_groups      = ["ac_ump"]
+          destination_addresses = ["Office365"]
+          destination_ports     = ["443"]
+          protocols             = ["TCP"]
+        },
+        {
+          name                  = "OVOC-NLE-to-Office365"
+          source_ip_groups      = ["ac_nle_ovoc"]
+          destination_addresses = ["Office365"]
+          destination_ports     = ["443"]
+          protocols             = ["TCP"]
+        },
+        {
+          name                  = "UMP-NLE-to-Office365"
+          source_ip_groups      = ["ac_nle_ump"]
+          destination_addresses = ["Office365"]
+          destination_ports     = ["443"]
+          protocols             = ["TCP"]
+        },
       ]
     }
   }
@@ -480,67 +704,60 @@ custom_network_collections = {
       priority = 701
       rules = [
         {
-          name                 = "SBC-to-OVOC-QoE"
-          source_ip_groups     = ["ac_sbc_mgmt"]
+          name                  = "SBC-to-OVOC-QoE"
+          source_ip_groups      = ["ac_sbc_mgmt"]
           destination_ip_groups = ["ac_ovoc"]
-          destination_ports    = ["5001"]
-          protocols            = ["TCP"]
+          destination_ports     = ["5001"]
+          protocols             = ["TCP"]
         },
         {
-          name                 = "SBC-to-OVOC-SNMP-Traps"
-          source_ip_groups     = ["ac_sbc_mgmt"]
+          name                  = "SBC-to-OVOC-SNMP-Traps"
+          source_ip_groups      = ["ac_sbc_mgmt"]
           destination_ip_groups = ["ac_ovoc"]
-          destination_ports    = ["162", "1161"]
-          protocols            = ["UDP"]
+          destination_ports     = ["162", "1161"]
+          protocols             = ["UDP"]
         },
         {
-          name                 = "SBC-to-OVOC-NTP"
-          source_ip_groups     = ["ac_sbc_mgmt"]
+          name                  = "SBC-to-OVOC-NTP"
+          source_ip_groups      = ["ac_sbc_mgmt"]
           destination_ip_groups = ["ac_ovoc"]
-          destination_ports    = ["123"]
-          protocols            = ["UDP"]
+          destination_ports     = ["123"]
+          protocols             = ["UDP"]
         },
         {
-          name                 = "SBC-to-ServiceServer-Syslog"
-          source_ip_groups     = ["ac_sbc_mgmt"]
+          name                  = "SBC-to-ServiceServer-Syslog"
+          source_ip_groups      = ["ac_sbc_mgmt"]
           destination_ip_groups = ["ac_service_server"]
-          destination_ports    = ["514"]
-          protocols            = ["UDP"]
+          destination_ports     = ["514"]
+          protocols             = ["UDP"]
         },
         {
-          name                 = "SBC-to-ServiceServer-DR"
-          source_ip_groups     = ["ac_sbc_mgmt"]
+          name                  = "SBC-to-ServiceServer-DR"
+          source_ip_groups      = ["ac_sbc_mgmt"]
           destination_ip_groups = ["ac_service_server"]
-          destination_ports    = ["925"]
-          protocols            = ["UDP"]
+          destination_ports     = ["925"]
+          protocols             = ["UDP"]
         },
         {
-          name                 = "OVOC-to-SBC-SSH"
-          source_ip_groups     = ["ac_ovoc"]
+          name                  = "OVOC-to-SBC-SNMP"
+          source_ip_groups      = ["ac_ovoc"]
           destination_ip_groups = ["ac_sbc_mgmt"]
-          destination_ports    = ["22"]
-          protocols            = ["TCP"]
+          destination_ports     = ["161"]
+          protocols             = ["UDP"]
         },
         {
-          name                 = "OVOC-to-SBC-SNMP"
-          source_ip_groups     = ["ac_ovoc"]
+          name                  = "OVOC-to-SBC-SNMP-Inform"
+          source_ip_groups      = ["ac_ovoc"]
           destination_ip_groups = ["ac_sbc_mgmt"]
-          destination_ports    = ["161"]
-          protocols            = ["UDP"]
+          destination_ports     = ["80", "1161"]
+          protocols             = ["UDP"]
         },
         {
-          name                 = "OVOC-to-SBC-SNMP-Inform"
-          source_ip_groups     = ["ac_ovoc"]
+          name                  = "OVOC-to-SBC-SSH"
+          source_ip_groups      = ["ac_ovoc"]
           destination_ip_groups = ["ac_sbc_mgmt"]
-          destination_ports    = ["80", "1161"]
-          protocols            = ["UDP"]
-        },
-        {
-          name                 = "OVOC-to-SBC-HTTPS"
-          source_ip_groups     = ["ac_ovoc"]
-          destination_ip_groups = ["ac_sbc_mgmt"]
-          destination_ports    = ["443"]
-          protocols            = ["TCP"]
+          destination_ports     = ["22"]
+          protocols             = ["TCP"]
         },
       ]
     }
@@ -552,32 +769,32 @@ custom_network_collections = {
       priority = 702
       rules = [
         {
-          name                 = "OVOC-to-UMP-HTTP-HTTPS"
-          source_ip_groups     = ["ac_ovoc"]
-          destination_ip_groups = ["ac_ump"]
-          destination_ports    = ["80", "443"]
-          protocols            = ["TCP"]
-        },
-        {
-          name                 = "OVOC-to-UMP-SS-SNMP"
-          source_ip_groups     = ["ac_ovoc"]
+          name                  = "OVOC-to-UMP-SS-SNMP"
+          source_ip_groups      = ["ac_ovoc"]
           destination_ip_groups = ["ac_ump", "ac_service_server"]
-          destination_ports    = ["161"]
-          protocols            = ["UDP"]
+          destination_ports     = ["161"]
+          protocols             = ["UDP"]
         },
         {
-          name                 = "UMP-to-OVOC-SBC-HTTP-HTTPS"
-          source_ip_groups     = ["ac_ump"]
-          destination_ip_groups = ["ac_ovoc", "ac_sbc_mgmt"]
-          destination_ports    = ["80", "443"]
-          protocols            = ["TCP"]
-        },
-        {
-          name                 = "UMP-SS-to-OVOC-SNMP-Traps"
-          source_ip_groups     = ["ac_ump", "ac_service_server"]
+          name                  = "UMP-SS-to-OVOC-SNMP-Traps"
+          source_ip_groups      = ["ac_ump", "ac_service_server"]
           destination_ip_groups = ["ac_ovoc"]
-          destination_ports    = ["162", "1161"]
-          protocols            = ["UDP"]
+          destination_ports     = ["162", "1161"]
+          protocols             = ["UDP"]
+        },
+        {
+          name                  = "OVOC-to-UMP-HTTP"
+          source_ip_groups      = ["ac_ovoc"]
+          destination_ip_groups = ["ac_ump"]
+          destination_ports     = ["80"]
+          protocols             = ["TCP"]
+        },
+        {
+          name                  = "UMP-to-OVOC-SBC-HTTP"
+          source_ip_groups      = ["ac_ump"]
+          destination_ip_groups = ["ac_ovoc", "ac_sbc_mgmt"]
+          destination_ports     = ["80"]
+          protocols             = ["TCP"]
         },
       ]
     }
@@ -639,6 +856,182 @@ custom_network_collections = {
           destination_ports     = ["*"]
           protocols             = ["TCP", "UDP"]
         }
+      ]
+    }
+
+    #---------------------------------------------------------------------------
+    # NLE: OVOC ↔ UMP / Service Server (server-to-server management, ASR failover)
+    #---------------------------------------------------------------------------
+    "AudioCodes-NLE-Server-Management" = {
+      priority = 705
+      rules = [
+        {
+          name                  = "NLE-OVOC-to-UMP-SS-SNMP"
+          source_ip_groups      = ["ac_nle_ovoc"]
+          destination_ip_groups = ["ac_nle_ump", "ac_nle_service_server"]
+          destination_ports     = ["161"]
+          protocols             = ["UDP"]
+        },
+        {
+          name                  = "NLE-UMP-SS-to-OVOC-SNMP-Traps"
+          source_ip_groups      = ["ac_nle_ump", "ac_nle_service_server"]
+          destination_ip_groups = ["ac_nle_ovoc"]
+          destination_ports     = ["162", "1161"]
+          protocols             = ["UDP"]
+        },
+        {
+          name                  = "NLE-OVOC-to-UMP-HTTP"
+          source_ip_groups      = ["ac_nle_ovoc"]
+          destination_ip_groups = ["ac_nle_ump"]
+          destination_ports     = ["80"]
+          protocols             = ["TCP"]
+        },
+        {
+          name                  = "NLE-UMP-to-OVOC-SBC-HTTP"
+          source_ip_groups      = ["ac_nle_ump"]
+          destination_ip_groups = ["ac_nle_ovoc", "ac_nle_sbc_mgmt"]
+          destination_ports     = ["80"]
+          protocols             = ["TCP"]
+        },
+      ]
+    }
+
+    #---------------------------------------------------------------------------
+    # NLE: SBC management ↔ OVOC / Service Server (ASR failover)
+    #---------------------------------------------------------------------------
+    "AudioCodes-NLE-SBC-Management" = {
+      priority = 706
+      rules = [
+        {
+          name                  = "NLE-SBC-to-OVOC-QoE"
+          source_ip_groups      = ["ac_nle_sbc_mgmt"]
+          destination_ip_groups = ["ac_nle_ovoc"]
+          destination_ports     = ["5001"]
+          protocols             = ["TCP"]
+        },
+        {
+          name                  = "NLE-SBC-to-OVOC-SNMP-Traps"
+          source_ip_groups      = ["ac_nle_sbc_mgmt"]
+          destination_ip_groups = ["ac_nle_ovoc"]
+          destination_ports     = ["162", "1161"]
+          protocols             = ["UDP"]
+        },
+        {
+          name                  = "NLE-SBC-to-OVOC-NTP"
+          source_ip_groups      = ["ac_nle_sbc_mgmt"]
+          destination_ip_groups = ["ac_nle_ovoc"]
+          destination_ports     = ["123"]
+          protocols             = ["UDP"]
+        },
+        {
+          name                  = "NLE-SBC-to-ServiceServer-Syslog"
+          source_ip_groups      = ["ac_nle_sbc_mgmt"]
+          destination_ip_groups = ["ac_nle_service_server"]
+          destination_ports     = ["514"]
+          protocols             = ["UDP"]
+        },
+        {
+          name                  = "NLE-SBC-to-ServiceServer-DR"
+          source_ip_groups      = ["ac_nle_sbc_mgmt"]
+          destination_ip_groups = ["ac_nle_service_server"]
+          destination_ports     = ["925"]
+          protocols             = ["UDP"]
+        },
+        {
+          name                  = "NLE-OVOC-to-SBC-SNMP"
+          source_ip_groups      = ["ac_nle_ovoc"]
+          destination_ip_groups = ["ac_nle_sbc_mgmt"]
+          destination_ports     = ["161"]
+          protocols             = ["UDP"]
+        },
+        {
+          name                  = "NLE-OVOC-to-SBC-SNMP-Inform"
+          source_ip_groups      = ["ac_nle_ovoc"]
+          destination_ip_groups = ["ac_nle_sbc_mgmt"]
+          destination_ports     = ["80", "1161"]
+          protocols             = ["UDP"]
+        },
+        {
+          name                  = "NLE-OVOC-to-SBC-SSH"
+          source_ip_groups      = ["ac_nle_ovoc"]
+          destination_ip_groups = ["ac_nle_sbc_mgmt"]
+          destination_ports     = ["22"]
+          protocols             = ["TCP"]
+        },
+      ]
+    }
+
+    #---------------------------------------------------------------------------
+    # NLE: SBC → Internet (Teams & Gamma VoIP, ASR failover)
+    #---------------------------------------------------------------------------
+    "AudioCodes-NLE-SBC-Internet" = {
+      priority = 707
+      rules = [
+        {
+          name                  = "NLE-SBC-Media-to-Internet-RTP"
+          source_ip_groups      = ["ac_nle_sbc_trust"]
+          destination_addresses = ["*"]
+          destination_ports     = ["3478-3481", "49152-59999"]
+          protocols             = ["UDP"]
+        },
+        {
+          name                  = "NLE-SBC-Trust-to-Internet-SIP-TLS"
+          source_ip_groups      = ["ac_nle_sbc_trust"]
+          destination_addresses = ["*"]
+          destination_ports     = ["5061"]
+          protocols             = ["TCP"]
+        },
+        {
+          name                  = "NLE-SBC-Untrust-to-Internet-SIP"
+          source_ip_groups      = ["ac_nle_sbc_untrust"]
+          destination_addresses = ["*"]
+          destination_ports     = ["5060"]
+          protocols             = ["TCP", "UDP"]
+        },
+        {
+          name                  = "NLE-SBC-Untrust-to-Gamma-Media"
+          source_ip_groups      = ["ac_nle_sbc_untrust"]
+          destination_addresses = ["151.2.135.15", "151.2.135.16", "151.2.139.11", "151.2.139.12"]
+          destination_ports     = ["6000-40000"]
+          protocols             = ["UDP"]
+        },
+      ]
+    }
+
+    #---------------------------------------------------------------------------
+    # OVOC & UMP → Microsoft Services (Office365 service tag, TCP 443)
+    #---------------------------------------------------------------------------
+    "AudioCodes-Microsoft-Services" = {
+      priority = 708
+      rules = [
+        {
+          name                  = "OVOC-Prod-to-Office365"
+          source_ip_groups      = ["ac_ovoc"]
+          destination_addresses = ["Office365"]
+          destination_ports     = ["443"]
+          protocols             = ["TCP"]
+        },
+        {
+          name                  = "UMP-Prod-to-Office365"
+          source_ip_groups      = ["ac_ump"]
+          destination_addresses = ["Office365"]
+          destination_ports     = ["443"]
+          protocols             = ["TCP"]
+        },
+        {
+          name                  = "OVOC-NLE-to-Office365"
+          source_ip_groups      = ["ac_nle_ovoc"]
+          destination_addresses = ["Office365"]
+          destination_ports     = ["443"]
+          protocols             = ["TCP"]
+        },
+        {
+          name                  = "UMP-NLE-to-Office365"
+          source_ip_groups      = ["ac_nle_ump"]
+          destination_addresses = ["Office365"]
+          destination_ports     = ["443"]
+          protocols             = ["TCP"]
+        },
       ]
     }
   }
@@ -683,6 +1076,65 @@ custom_application_collections = {
         }
       ]
     }
+    "Debian-Updates" = {
+      priority = 701
+      rules = [
+        {
+          name             = "Debian-Updates"
+          source_ip_groups = ["ac_sbc_mgmt"]
+          destination_fqdns = [
+            "azure.deb.debian.cloud"
+          ]
+          protocols = [{ type = "Http", port = 80 }]
+        }
+      ]
+    }
+    "AudioCodes-NLE" = {
+      priority = 702
+      rules = [
+        {
+          name             = "Allow-NLE-OVOC-Outbound"
+          source_ip_groups = ["ac_nle_ovoc"]
+          destination_fqdns = [
+            "box.audiocodes.com",
+            "download-audiocodes-ireland.s3.amazonaws.com"
+          ]
+          protocols = [{ type = "Https", port = 443 }]
+        },
+        {
+          name             = "Allow-NLE-UMP-Outbound"
+          source_ip_groups = ["ac_nle_ump"]
+          destination_fqdns = [
+            "box.audiocodes.com",
+            "download-audiocodes-ireland.s3.amazonaws.com",
+            "*.service.signalr.net"
+          ]
+          protocols = [{ type = "Https", port = 443 }]
+        },
+        {
+          name             = "Allow-NLE-ServiceServer-Outbound"
+          source_ip_groups = ["ac_nle_service_server"]
+          destination_fqdns = [
+            "box.audiocodes.com",
+            "download-audiocodes-ireland.s3.amazonaws.com"
+          ]
+          protocols = [{ type = "Https", port = 443 }]
+        }
+      ]
+    }
+    "NLE-Debian-Updates" = {
+      priority = 703
+      rules = [
+        {
+          name             = "NLE-Debian-Updates"
+          source_ip_groups = ["ac_nle_sbc_mgmt"]
+          destination_fqdns = [
+            "azure.deb.debian.cloud"
+          ]
+          protocols = [{ type = "Http", port = 80 }]
+        }
+      ]
+    }
   }
   secondary = {
     "AudioCodes-Production" = {
@@ -715,6 +1167,65 @@ custom_application_collections = {
             "download-audiocodes-ireland.s3.amazonaws.com"
           ]
           protocols = [{ type = "Https", port = 443 }]
+        }
+      ]
+    }
+    "Debian-Updates" = {
+      priority = 701
+      rules = [
+        {
+          name             = "Debian-Updates"
+          source_ip_groups = ["ac_sbc_mgmt"]
+          destination_fqdns = [
+            "azure.deb.debian.cloud"
+          ]
+          protocols = [{ type = "Http", port = 80 }]
+        }
+      ]
+    }
+    "AudioCodes-NLE" = {
+      priority = 702
+      rules = [
+        {
+          name             = "Allow-NLE-OVOC-Outbound-DR"
+          source_ip_groups = ["ac_nle_ovoc"]
+          destination_fqdns = [
+            "box.audiocodes.com",
+            "download-audiocodes-ireland.s3.amazonaws.com"
+          ]
+          protocols = [{ type = "Https", port = 443 }]
+        },
+        {
+          name             = "Allow-NLE-UMP-Outbound-DR"
+          source_ip_groups = ["ac_nle_ump"]
+          destination_fqdns = [
+            "box.audiocodes.com",
+            "download-audiocodes-ireland.s3.amazonaws.com",
+            "*.service.signalr.net"
+          ]
+          protocols = [{ type = "Https", port = 443 }]
+        },
+        {
+          name             = "Allow-NLE-ServiceServer-Outbound-DR"
+          source_ip_groups = ["ac_nle_service_server"]
+          destination_fqdns = [
+            "box.audiocodes.com",
+            "download-audiocodes-ireland.s3.amazonaws.com"
+          ]
+          protocols = [{ type = "Https", port = 443 }]
+        }
+      ]
+    }
+    "NLE-Debian-Updates" = {
+      priority = 703
+      rules = [
+        {
+          name             = "NLE-Debian-Updates"
+          source_ip_groups = ["ac_nle_sbc_mgmt"]
+          destination_fqdns = [
+            "azure.deb.debian.cloud"
+          ]
+          protocols = [{ type = "Http", port = 80 }]
         }
       ]
     }

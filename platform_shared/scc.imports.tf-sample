@@ -1,0 +1,26 @@
+###############################################################################
+# One-time imports - remove this file after successful apply
+###############################################################################
+
+# AudioCodes cross-region routes on hub firewall route tables
+# These routes were created manually in Azure and need importing into state.
+
+import {
+  to = module.hub_and_spoke_vnet[0].module.hub_and_spoke_vnet.azurerm_route.firewall_mesh["AudioCodesProdWest"]
+  id = "/subscriptions/91f98b99-3946-4096-8191-1078a530c5fd/resourceGroups/rg-hub-prod-network-uks-001/providers/Microsoft.Network/routeTables/rt-hub-prod-fw-uks-001/routes/AudioCodesProdWest"
+}
+
+import {
+  to = module.hub_and_spoke_vnet[0].module.hub_and_spoke_vnet.azurerm_route.firewall_mesh["AudioCodesSBCProdWest"]
+  id = "/subscriptions/91f98b99-3946-4096-8191-1078a530c5fd/resourceGroups/rg-hub-prod-network-uks-001/providers/Microsoft.Network/routeTables/rt-hub-prod-fw-uks-001/routes/AudioCodesSBCProdWest"
+}
+
+import {
+  to = module.hub_and_spoke_vnet[0].module.hub_and_spoke_vnet.azurerm_route.firewall_mesh["AudioCodesProdSouth"]
+  id = "/subscriptions/91f98b99-3946-4096-8191-1078a530c5fd/resourceGroups/rg-hub-prod-network-ukw-001/providers/Microsoft.Network/routeTables/rt-hub-prod-fw-ukw-001/routes/AudioCodesProdSouth"
+}
+
+import {
+  to = module.hub_and_spoke_vnet[0].module.hub_and_spoke_vnet.azurerm_route.firewall_mesh["AudioCodesSBCProdSouth"]
+  id = "/subscriptions/91f98b99-3946-4096-8191-1078a530c5fd/resourceGroups/rg-hub-prod-network-ukw-001/providers/Microsoft.Network/routeTables/rt-hub-prod-fw-ukw-001/routes/AudioCodesSBCProdSouth"
+}

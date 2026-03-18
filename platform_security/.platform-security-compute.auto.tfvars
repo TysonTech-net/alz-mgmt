@@ -72,7 +72,11 @@ compute = {
         name               = "vmsecuksten001"
         resource_group_key = "tenable"
         os_type            = "Linux"
-        sku_size            = "Standard_B4ls_v2"
+        sku_size           = "Standard_B4ls_v2"
+
+        # Patching - Tenable marketplace image doesn't support AutomaticByPlatform
+        patch_mode            = "ImageDefault"
+        patch_assessment_mode = "ImageDefault"
 
         # Tenable Core + Nessus (BYOL) - Marketplace Image
         source_image_reference = {
@@ -145,6 +149,7 @@ compute = {
         resource_group_key = "syslog"
         os_type            = "Linux"
         sku_size           = "Standard_D2s_v5"
+
 
         # Ubuntu 22.04 LTS Gen2
         source_image_reference = {
@@ -229,6 +234,10 @@ compute = {
         os_type            = "Linux"
         sku_size           = "Standard_B4ls_v2"
 
+        # Patching - Tenable marketplace image doesn't support AutomaticByPlatform
+        patch_mode            = "ImageDefault"
+        patch_assessment_mode = "ImageDefault"
+
         # Tenable Core + Nessus (BYOL) - Marketplace Image
         source_image_reference = {
           publisher = "tenable"
@@ -293,6 +302,7 @@ compute = {
         resource_group_key = "syslog"
         os_type            = "Linux"
         sku_size           = "Standard_D2s_v5"
+
 
         # Ubuntu 22.04 LTS Gen2
         source_image_reference = {

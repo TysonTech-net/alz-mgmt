@@ -68,10 +68,18 @@ variable "ip_groups" {
     # Spoke networks in other regions (for cross-region connectivity)
     remote_spokes = optional(set(string), [])
 
+    # Jumpbox/management subnets (SSH + RDP access to all spokes)
+    jumpboxes = optional(set(string), [])
+
     # LogicMonitor monitoring
     logicmonitor = optional(object({
       collectors = optional(set(string), [])
       targets    = optional(set(string), [])
+    }), {})
+
+    # Tenable vulnerability scanning
+    tenable = optional(object({
+      scanners = optional(set(string), [])
     }), {})
   }))
 }
@@ -118,12 +126,18 @@ variable "rule_settings" {
     # Spoke traffic
     enable_spoke_to_spoke           = optional(bool)
     enable_cross_region_spokes      = optional(bool)  # Cross-region spoke ↔ remote spoke traffic
+    enable_jumpbox_access           = optional(bool)  # Jumpboxes → Spokes (SSH, RDP)
     enable_icmp                     = optional(bool)
 
     # On-prem traffic
     enable_spokes_to_on_prem        = optional(bool)
     enable_on_prem_adds             = optional(bool)
     enable_on_prem_kerberos         = optional(bool)
+
+    # OS updates and security tooling
+    enable_edge_updates             = optional(bool)
+    enable_linux_updates            = optional(bool)
+    enable_tenable                  = optional(bool)
 
     # Rule collection group priorities
     # Order: DNAT(100) → Troubleshoot(200) → Identity(300) → Internet Net(400) / App(410) → Platform Net(500) / App(510) → Monitoring(600) → Custom(700-800)
@@ -136,6 +150,20 @@ variable "rule_settings" {
     rcg_monitoring_priority             = optional(number)
     rcg_custom_network_priority         = optional(number)
     rcg_custom_application_priority     = optional(number)
+  })
+  default = {}
+}
+
+###############################################################################
+# Traffic Rules - Override default ports/protocols
+###############################################################################
+
+variable "traffic_rules" {
+  description = "Optional: Override default ports/protocols for directional rules"
+  type = object({
+    spokes_to_on_prem = optional(object({ ports = list(string), protocols = list(string) }))
+    on_prem_to_spokes = optional(object({ ports = list(string), protocols = list(string) }))
+    spoke_to_spoke    = optional(object({ ports = list(string), protocols = list(string) }))
   })
   default = {}
 }

@@ -25,6 +25,7 @@ module "firewall_rules" {
 
   # Rule settings from tfvars (override module defaults as needed)
   rule_settings = var.rule_settings
+  traffic_rules = var.traffic_rules
 
   # Custom rules from tfvars (keyed by region: primary/secondary)
   custom_dnat_collections        = try(var.custom_dnat_collections[each.key], {})
