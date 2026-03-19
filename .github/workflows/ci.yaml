@@ -6,6 +6,20 @@ on:
       - main
   workflow_dispatch:
     inputs:
+      terraform_folder:
+        description: 'Terraform folder to validate (or all)'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - 'all'
+          - 'platform_shared'
+          - 'platform_amba'
+          - 'platform_connectivity'
+          - 'platform_firewall_rules'
+          - 'platform_identity'
+          - 'platform_security'
+          - 'platform_management'
       terraform_cli_version:
         description: 'Terraform CLI Version'
         required: true
@@ -14,12 +28,64 @@ on:
 
 jobs:
   validate_and_plan:
-    uses: TysonTech-net/alz-mgmt-templates/.github/workflows/ci-template.yaml@main
-    name: 'CI'
+    runs-on: ubuntu-latest
+    environment: alz-mgmt-plan
+    strategy:
+      fail-fast: false
+      matrix:
+        folder: ${{ (inputs.terraform_folder == 'all' || inputs.terraform_folder == '') && fromJson('["platform_shared", "platform_amba", "platform_connectivity", "platform_firewall_rules", "platform_identity", "platform_security", "platform_management"]') || fromJson(format('["{0}"]', inputs.terraform_folder)) }}
+    name: 'CI - ${{ matrix.folder }}'
     permissions:
       id-token: write
       contents: read
       pull-requests: write
-    with:
-      root_module_folder_relative_path: '.'
-      terraform_cli_version: ${{ inputs.terraform_cli_version }}
+
+    env:
+      ARM_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
+      ARM_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+      ARM_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
+      ARM_USE_OIDC: true
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          path: alz-mgmt
+
+      - name: Checkout alz-modules
+        uses: actions/checkout@v4
+        with:
+          repository: TysonTech-net/alz-modules
+          path: alz-modules
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ inputs.terraform_cli_version || 'latest' }}
+
+      - name: Azure Login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Terraform Init
+        working-directory: alz-mgmt/${{ matrix.folder }}
+        run: terraform init -backend-config=backend.conf
+
+      - name: Terraform Validate
+        working-directory: alz-mgmt/${{ matrix.folder }}
+        run: terraform validate
+
+      - name: Terraform Plan
+        working-directory: alz-mgmt/${{ matrix.folder }}
+        run: terraform plan -input=false -out=tfplan
+
+      - name: Upload Plan
+        uses: actions/upload-artifact@v4
+        with:
+          name: tfplan-${{ matrix.folder }}
+          path: alz-mgmt/${{ matrix.folder }}/tfplan
+          retention-days: 5
