@@ -1,3 +1,24 @@
+# platform_connectivity
+
+Extends hub infrastructure with public DNS zones and DNS records. Reads hub VNet and DNS zone configuration from `platform_shared` via remote state.
+
+## What It Deploys
+
+- Public DNS zones via the AVM DNS zone module
+- DNS records (A, CNAME, MX, TXT, SRV, etc.) for customer domains
+
+## File Layout
+
+| Files | Origin | Notes |
+|-------|--------|-------|
+| `main.tf` | Template | Calls AVM regions utility module |
+| `variables.tf` | Template | Variable definitions |
+| `resources.dns.tf` | SCC custom | Customer-specific DNS zone records |
+| `.platform-connectivity.auto.tfvars` | Customer config | DNS zone and record definitions |
+
+## Terraform Docs
+
+<!-- BEGIN_TF_DOCS -->
 ## Requirements
 
 | Name | Version |
@@ -38,3 +59,4 @@ No resources.
 ## Outputs
 
 No outputs.
+<!-- END_TF_DOCS -->

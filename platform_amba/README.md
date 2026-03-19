@@ -1,3 +1,25 @@
+# platform_amba
+
+Deploys Azure Monitor Baseline Alerts (AMBA) via the [AVM AMBA pattern module](https://github.com/Azure/terraform-azurerm-avm-ptn-monitoring-amba-alz). Assigns monitoring policies across the management group hierarchy.
+
+## What It Deploys
+
+- AMBA policy definitions and assignments via the ALZ provider
+- Action groups for alert notifications (email, webhook, Event Hub)
+- User-assigned managed identity for AMBA remediation tasks
+
+## File Layout
+
+| Files | Origin | Notes |
+|-------|--------|-------|
+| `main.monitoring.amba.tf` | Template | AVM AMBA module call |
+| `terraform.tf` | Template | Provider config with ALZ and AMBA library references |
+| `variables.tf` | Template | Variable definitions |
+| `amba.auto.tfvars` | Customer config | Action groups, alert severity, tags |
+
+## Terraform Docs
+
+<!-- BEGIN_TF_DOCS -->
 ## Requirements
 
 | Name | Version |
@@ -58,3 +80,4 @@
 ## Outputs
 
 No outputs.
+<!-- END_TF_DOCS -->

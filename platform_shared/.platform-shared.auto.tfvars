@@ -311,6 +311,18 @@ management_group_settings = {
             resourceGroupLocation = "$${starter_location_01}"
           }
         }
+        # Exclude DNS resolver outbound subnet (delegated, can't have NSG)
+        Deny-Subnet-Without-Nsg = {
+          parameters = {
+            excludedSubnets = [
+              "GatewaySubnet",
+              "AzureFirewallSubnet",
+              "AzureFirewallManagementSubnet",
+              "dns-resolver",
+              "dns-resolver-outbound",
+            ]
+          }
+        }
       }
     }
   }
@@ -394,6 +406,13 @@ hub_virtual_networks = {
       route_table_name_firewall     = "$${primary_route_table_firewall_name}"
       route_table_name_user_subnets = "$${primary_route_table_user_subnets_name}"
       subnets                       = {}
+      # PDNS: Uncomment when MoJ whitelists firewall PIPs
+      # subnets = {
+      #   dns-resolver-outbound = {
+      #     name             = "dns-resolver-outbound"
+      #     address_prefixes = ["10.0.0.176/28"]
+      #   }
+      # }
       # AudioCodes cross-region routes via peer hub firewall
       route_table_entries_firewall = [
         {
@@ -548,6 +567,27 @@ hub_virtual_networks = {
     private_dns_resolver = {
       subnet_address_prefix = "$${primary_private_dns_resolver_subnet_address_prefix}"
       name                  = "$${primary_private_dns_resolver_name}"
+      # PDNS: Uncomment when MoJ whitelists firewall PIPs
+      # outbound_endpoints = {
+      #   outbound = {
+      #     name        = "Outbound"
+      #     subnet_name = "dns-resolver-outbound"
+      #     forwarding_ruleset = {
+      #       pdns = {
+      #         name = "frs-hub-prod-pdns-uks-001"
+      #         rules = {
+      #           forward_all_to_pdns = {
+      #             domain_name = "."
+      #             destination_ip_addresses = {
+      #               "25.25.25.25" = "53"
+      #               "25.26.27.28" = "53"
+      #             }
+      #           }
+      #         }
+      #       }
+      #     }
+      #   }
+      # }
     }
     bastion = {
       subnet_address_prefix = "$${primary_bastion_subnet_address_prefix}"
@@ -576,6 +616,13 @@ hub_virtual_networks = {
       route_table_name_firewall     = "$${secondary_route_table_firewall_name}"
       route_table_name_user_subnets = "$${secondary_route_table_user_subnets_name}"
       subnets                       = {}
+      # PDNS: Uncomment when MoJ whitelists firewall PIPs
+      # subnets = {
+      #   dns-resolver-outbound = {
+      #     name             = "dns-resolver-outbound"
+      #     address_prefixes = ["10.1.0.176/28"]
+      #   }
+      # }
       # AudioCodes cross-region routes via peer hub firewall
       route_table_entries_firewall = [
         {
@@ -730,6 +777,27 @@ hub_virtual_networks = {
     private_dns_resolver = {
       subnet_address_prefix = "$${secondary_private_dns_resolver_subnet_address_prefix}"
       name                  = "$${secondary_private_dns_resolver_name}"
+      # PDNS: Uncomment when MoJ whitelists firewall PIPs
+      # outbound_endpoints = {
+      #   outbound = {
+      #     name        = "Outbound"
+      #     subnet_name = "dns-resolver-outbound"
+      #     forwarding_ruleset = {
+      #       pdns = {
+      #         name = "frs-hub-prod-pdns-ukw-001"
+      #         rules = {
+      #           forward_all_to_pdns = {
+      #             domain_name = "."
+      #             destination_ip_addresses = {
+      #               "25.25.25.25" = "53"
+      #               "25.26.27.28" = "53"
+      #             }
+      #           }
+      #         }
+      #       }
+      #     }
+      #   }
+      # }
     }
     bastion = {
       subnet_address_prefix = "$${secondary_bastion_subnet_address_prefix}"

@@ -694,6 +694,20 @@ custom_network_collections = {
         },
       ]
     }
+
+    # PDNS: Uncomment when MoJ whitelists firewall PIPs
+    # "DNS-Resolver-to-PDNS" = {
+    #   priority = 709
+    #   rules = [
+    #     {
+    #       name                  = "Resolver-to-PDNS"
+    #       source_addresses      = ["10.0.0.176/28"]
+    #       destination_addresses = ["25.25.25.25", "25.26.27.28"]
+    #       destination_ports     = ["53"]
+    #       protocols             = ["TCP", "UDP"]
+    #     },
+    #   ]
+    # }
   }
 
   secondary = {
@@ -1034,6 +1048,20 @@ custom_network_collections = {
         },
       ]
     }
+
+    # PDNS: Uncomment when MoJ whitelists firewall PIPs
+    # "DNS-Resolver-to-PDNS" = {
+    #   priority = 709
+    #   rules = [
+    #     {
+    #       name                  = "Resolver-to-PDNS"
+    #       source_addresses      = ["10.1.0.176/28"]
+    #       destination_addresses = ["25.25.25.25", "25.26.27.28"]
+    #       destination_ports     = ["53"]
+    #       protocols             = ["TCP", "UDP"]
+    #     },
+    #   ]
+    # }
   }
 }
 

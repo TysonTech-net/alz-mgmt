@@ -14,8 +14,11 @@ on:
         options:
           - 'platform_shared'
           - 'platform_amba'
-          - 'platform_management'
+          - 'platform_connectivity'
+          - 'platform_firewall_rules'
+          - 'platform_identity'
           - 'platform_security'
+          - 'platform_management'
       terraform_action:
         description: 'Terraform Action to perform'
         required: true

@@ -1,10 +1,35 @@
+# platform_management
+
+Management domain workload platform using the `scc-workload-resources` stack from `alz-modules`. Same structure as `platform_identity` (same stack module, different tfvars).
+
+This subscription also hosts the Terraform state storage account and is the target for maintenance configurations deployed via `platform_shared`.
+
+## What It Deploys
+
+- Spoke VNets peered to hub, with subnets, NSGs, and route tables
+- Recovery Services vaults and Key Vaults
+- Virtual machines (management workloads: jumpboxes, monitoring agents, etc.)
+- Hub-side routing (UDRs, firewall rules integration)
+
+## File Layout
+
+| Files | Origin | Notes |
+|-------|--------|-------|
+| `main.tf` | Template | Single module call to `scc-workload-resources` stack |
+| `variables.tf`, `variables.*.tf` | Template | Variable definitions (compute, vending, management) |
+| `.platform-management.auto.tfvars` | Customer config | Subscription, naming, networking, vending, management config |
+| `.platform-management-compute.auto.tfvars` | Customer config | VM specifications (instances, disks, extensions) |
+
+## Terraform Docs
+
+<!-- BEGIN_TF_DOCS -->
 ## Requirements
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.5.0 |
-| <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) | >= 2.4.0 |
-| <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | >= 3.71.0 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | ~> 1.12 |
+| <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) | ~> 2.0 |
+| <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | ~> 4.0 |
 
 ## Providers
 
@@ -44,3 +69,4 @@ No resources.
 ## Outputs
 
 No outputs.
+<!-- END_TF_DOCS -->

@@ -1,3 +1,30 @@
+# platform_shared
+
+Foundation platform generated from the [Azure Landing Zones Terraform Accelerator](https://github.com/Azure/ALZ-Terraform-Accelerator). Must be deployed first as all other platforms depend on its remote state outputs.
+
+## What It Deploys
+
+- Management group hierarchy via the ALZ provider and local `lib/` archetype overrides
+- Hub VNets (uksouth, ukwest) with Azure Firewall, Bastion, and VPN Gateway subnets
+- Azure Firewall policies (rule collection groups are managed separately in `platform_firewall_rules`)
+- Azure Policy assignments across the management group hierarchy
+- Management resources: Log Analytics workspace, Automation Account
+- Azure Update Manager maintenance configurations (SCC addition)
+
+## File Layout
+
+| Files | Origin | Notes |
+|-------|--------|-------|
+| `main.*.tf`, `variables.*.tf`, `locals.tf`, `outputs.tf` | Accelerator | Should remain largely untouched |
+| `modules/` | Accelerator | config-templating, management_groups, management_resources |
+| `lib/` | Accelerator (customised) | Archetype overrides and architecture definition for policy assignments |
+| `scc.*.tf` | SCC custom | Maintenance configs, tag policies, custom outputs, imports |
+| `.platform-shared.auto.tfvars` | Customer config | Primary configuration values |
+| `.scc-maintenance.auto.tfvars` | Customer config | Azure Update Manager patch schedules |
+
+## Terraform Docs
+
+<!-- BEGIN_TF_DOCS -->
 ## Requirements
 
 | Name | Version |
@@ -12,8 +39,8 @@
 
 | Name | Version |
 |------|---------|
-| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | 4.60.0 |
-| <a name="provider_azurerm.management"></a> [azurerm.management](#provider\_azurerm.management) | 4.60.0 |
+| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | 4.62.1 |
+| <a name="provider_azurerm.management"></a> [azurerm.management](#provider\_azurerm.management) | 4.62.1 |
 
 ## Modules
 
@@ -112,3 +139,4 @@
 | <a name="output_virtual_wan_sidecar_virtual_network_resources"></a> [virtual\_wan\_sidecar\_virtual\_network\_resources](#output\_virtual\_wan\_sidecar\_virtual\_network\_resources) | n/a |
 | <a name="output_virtual_wan_virtual_hub_resource_ids"></a> [virtual\_wan\_virtual\_hub\_resource\_ids](#output\_virtual\_wan\_virtual\_hub\_resource\_ids) | n/a |
 | <a name="output_virtual_wan_virtual_hub_resource_names"></a> [virtual\_wan\_virtual\_hub\_resource\_names](#output\_virtual\_wan\_virtual\_hub\_resource\_names) | n/a |
+<!-- END_TF_DOCS -->
